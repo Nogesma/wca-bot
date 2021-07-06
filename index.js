@@ -17,7 +17,7 @@ bot.on('ready', () => {
   logger.info('Bot ready');
   startCron(bot);
   bot.user.setPresence({
-    activity: { name: 'for new PB | ?h', type: 3 },
+    activity: { name: 'for new records', type: 3 },
   });
 });
 
