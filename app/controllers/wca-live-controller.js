@@ -1,9 +1,14 @@
-import { getRecentRecords } from '../helpers/wca-live-helpers.js';
+import {
+  countryNameToFlagEmoji,
+  eventToEmoji,
+  formatJSON,
+  getRecentRecords,
+  tagToEmoji,
+} from '../helpers/wca-live-helpers.js';
 import { getWcalive, updateWcalive } from './db-controller.js';
-import fs from 'fs';
-import { difference, equals } from 'ramda';
+import { difference, map } from 'ramda';
+import { centisecondsToTime } from '../tools/calculator.js';
 
-const formatJSON = (json) => JSON.parse(JSON.stringify(json));
 const getNewRecords = async () => {
   const newRecords = await getRecentRecords();
 
@@ -12,10 +17,27 @@ const getNewRecords = async () => {
   const oldRecords = formatJSON(await getWcalive());
 
   await updateWcalive(newRecords);
-  console.log('up');
 
-  const diff = difference(recentRecords, oldRecords);
-  console.log(diff);
+  return difference(recentRecords, oldRecords);
 };
+/*
+ * Format: {name} ({country} {flag_emoji}) a battu le {WR/CR/NR} {single/average}
+ *         de {event} {event_emoji} avec un score de {result} ({competition})
+ */
 
-export { getNewRecords };
+const formatRecord = (records) =>
+  map(
+    (r) =>
+      `${r.result.person.name} (${
+        r.result.person.country.name
+      } ${countryNameToFlagEmoji(r.result.person.country.name)}) a battu le ${
+        tagToEmoji[r.tag]
+      } ${r.type} de ${r.result.round.competitionEvent.event.name} ${
+        eventToEmoji[r.result.round.competitionEvent.event.id]
+      } avec un score de **${centisecondsToTime(r.attemptResult)}** (${
+        r.result.round.competitionEvent.competition.name
+      })`,
+    records
+  );
+
+export { getNewRecords, formatRecord };

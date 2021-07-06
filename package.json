@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "chalk": "^4.1.1",
+    "country-code-emoji": "^2.3.0",
+    "country-list": "^2.2.0",
     "cron": "^1.8.2",
     "discord.js": "^12.5.3",
     "graphql": "^15.5.1",
@@ -23,6 +25,7 @@
   },
   "devDependencies": {
     "@types/node": "^16.0.0",
+    "dotenv": "^10.0.0",
     "nodemon": "^2.0.9",
     "prettier": "^2.3.2"
   }

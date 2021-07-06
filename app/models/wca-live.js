@@ -19,8 +19,11 @@ const wcaliveSubSchema = new mongoose.Schema(
   { _id: false }
 );
 
-const wcaliveSchema = new mongoose.Schema({
-  recentRecords: [wcaliveSubSchema],
-});
+const wcaliveSchema = new mongoose.Schema(
+  {
+    recentRecords: [wcaliveSubSchema],
+  },
+  { versionKey: false }
+);
 
 export default mongoose.model('Wcalive', wcaliveSchema);
