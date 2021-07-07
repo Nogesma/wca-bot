@@ -20,11 +20,12 @@ const getNewRecords = async () => {
 
   return difference(recentRecords, oldRecords);
 };
+
 /*
  * Format: {name} ({country} {flag_emoji}) a battu le {WR/CR/NR} {single/average}
  *         de {event} {event_emoji} avec un score de {result} ({competition})
+ *         {wca_live_url}
  */
-
 const formatRecord = (records) =>
   map(
     (r) =>
@@ -36,7 +37,9 @@ const formatRecord = (records) =>
         eventToEmoji[r.result.round.competitionEvent.event.id]
       } avec un score de **${centisecondsToTime(r.attemptResult)}** (${
         r.result.round.competitionEvent.competition.name
-      })`,
+      })\n<https://live.worldcubeassociation.org/competitions/${
+        r.result.round.competitionEvent.competition.id
+      }/rounds/${r.result.round.id}>`,
     records
   );
 
