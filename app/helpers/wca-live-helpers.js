@@ -44,6 +44,7 @@ const eventToEmoji = {
   '5bld': '<:5BLD:706124832026132501>',
   fmc: '✍️',
   mbld: '🧠',
+  pyram: '<:pyraminx:693881128981102682>',
 };
 
 export {
