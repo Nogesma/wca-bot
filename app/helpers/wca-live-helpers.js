@@ -2,7 +2,10 @@ import { graphql } from 'graphql';
 import { UrlLoader, loadSchema } from 'graphql-tools';
 import { getCode } from 'country-list';
 import countryCodeEmoji from 'country-code-emoji';
-import { equals, includes } from 'ramda';
+
+import dayjs from 'dayjs';
+import { flatten, map, omit, range, equals, includes } from 'ramda';
+import fetch from 'node-fetch';
 
 const getSchema = await loadSchema(
   'https://live.worldcubeassociation.org/api/graphql',
@@ -14,9 +17,73 @@ const getSchema = await loadSchema(
 const getRecentRecords = async () =>
   graphql(
     await getSchema,
-    '{ recentRecords { type tag attemptResult result { person { name country { name } } round { id competitionEvent { event { id name } competition { id name } } } } } }'
+    `
+      {
+        recentRecords {
+          type
+          tag
+          attemptResult
+          result {
+            person {
+              name
+              country {
+                name
+              }
+            }
+            round {
+              id
+              competitionEvent {
+                event {
+                  id
+                  name
+                }
+                competition {
+                  id
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
+    `
   ).then((response) => response.data);
 
+const getUpcomingCompetitions = async () => {
+  const url = `https://www.worldcubeassociation.org/api/v0/competitions?sort=start_date&start=${dayjs().format(
+    'YYYY-MM-DD'
+  )}`;
+
+  const { response: firstResponse, numberOfPages } = await fetch(url).then(
+    async (res) => {
+      const numberOfPages = Math.ceil(
+        res.headers.get('Total') / res.headers.get('Per-page')
+      );
+      const response = await res.json();
+      return { response, numberOfPages };
+    }
+  );
+
+  const responseArray = await Promise.all(
+    map(
+      (n) => fetch(url + '&page=' + n).then((res) => res.json()),
+      range(2, numberOfPages + 1)
+    )
+  );
+
+  return map(
+    omit(['delegates', 'trainee_delegates', 'organizers']),
+    flatten([firstResponse, responseArray])
+  );
+};
+
+const prettifyTwoDates = (date1, date2) => {
+  const formattedDate = dayjs(date2).format('DD/MM/YYYY');
+
+  return dayjs(date1).format('DD/MM/YYYY') === formattedDate
+    ? formattedDate
+    : `${dayjs(date1).format('DD')} au ${formattedDate}`;
+};
 // This function is used to remove the inconsistencies between mongodb and
 // graphql json, which allows for easier comparison
 const formatJSON = (json) => JSON.parse(JSON.stringify(json));
@@ -58,9 +125,11 @@ const getResultType = (t, e) =>
 
 export {
   getRecentRecords,
+  getUpcomingCompetitions,
   formatJSON,
   countryNameToFlagEmoji,
   eventToEmoji,
   getColorOfTag,
   getResultType,
+  prettifyTwoDates,
 };

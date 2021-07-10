@@ -4,11 +4,22 @@ const wcaliveSubSchema = new mongoose.Schema(
   {
     attemptResult: Number,
     result: {
-      person: { country: { name: String }, name: String },
+      person: {
+        country: {
+          name: String,
+        },
+        name: String,
+      },
       round: {
         competitionEvent: {
-          competition: { id: String, name: String },
-          event: { id: String, name: String },
+          competition: {
+            id: String,
+            name: String,
+          },
+          event: {
+            id: String,
+            name: String,
+          },
         },
         id: String,
       },

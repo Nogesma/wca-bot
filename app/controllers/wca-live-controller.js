@@ -12,15 +12,15 @@ import { centisecondsToTime } from '../tools/calculator.js';
 import { MessageEmbed } from 'discord.js';
 
 const getNewRecords = async () => {
-  const newRecords = await getRecentRecords();
+  const recentRecords = await getRecentRecords();
 
-  const recentRecords = formatJSON(newRecords.recentRecords);
+  const formattedRecentRecords = formatJSON(recentRecords.recentRecords);
 
   const oldRecords = formatJSON(await getWcalive());
 
-  await updateWcalive(newRecords);
+  await updateWcalive(recentRecords);
 
-  return difference(recentRecords, oldRecords);
+  return difference(formattedRecentRecords, oldRecords);
 };
 
 /*

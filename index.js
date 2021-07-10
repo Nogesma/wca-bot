@@ -3,6 +3,7 @@ import logger from './app/tools/logger.js';
 import mongoose from 'mongoose';
 
 import { startCron, stopCron } from './app/controllers/cron-controller.js';
+import { incomingMessage } from './app/controllers/message-controller.js';
 
 mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/wca', {
   useNewUrlParser: true,
@@ -20,6 +21,8 @@ bot.on('ready', () => {
     activity: { name: 'for new records', type: 3 },
   });
 });
+
+bot.on('message', incomingMessage);
 
 bot.login(process.env.TOKEN);
 
