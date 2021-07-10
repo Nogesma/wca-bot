@@ -9,6 +9,7 @@ COPY yarn.lock .
 
 RUN yarn
 
+COPY scripts scripts/
 COPY app app/
 COPY index.js .
 
