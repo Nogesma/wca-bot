@@ -1,4 +1,5 @@
 import { cond, pipe, prop, propEq, split, when } from 'ramda';
+
 import { sendNewCompMessage } from '../helpers/message-handler.js';
 
 const messageIsCommand = (mess) =>

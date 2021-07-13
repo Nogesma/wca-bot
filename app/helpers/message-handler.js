@@ -1,5 +1,6 @@
+import { equals, filter, isEmpty, map, pipe, prop } from 'ramda';
+
 import { getWcacomp } from '../controllers/db-controller.js';
-import { equals, filter, map, pipe, prop } from 'ramda';
 import { formatCompetition } from '../controllers/wca-comp-controller.js';
 
 const sendNewCompMessage = async ({ channel, args }) => {
@@ -11,11 +12,23 @@ const sendNewCompMessage = async ({ channel, args }) => {
     competitions.competitions
   );
 
-  const [{ embed, reactions }] = formatCompetition(comp);
+  const formattedCompetition = formatCompetition(comp);
 
-  const chan = await channel.guild.channels.cache.get(process.env.WCA_LIVE);
+  if (!isEmpty(formattedCompetition)) {
+    const [{ embed, reactions }] = formattedCompetition;
 
-  chan.send(embed).then((mess) => map((emoji) => mess.react(emoji), reactions));
+    const wcaChan = await channel.guild.channels.cache.get(
+      process.env.WCA_COMP
+    );
+
+    wcaChan
+      .send(embed)
+      .then((mess) => map((emoji) => mess.react(emoji), reactions));
+
+    channel.send('La compétition a été annoncée.');
+  } else {
+    channel.send("Erreur, la compétition n'existe pas dans la db.");
+  }
 };
 
 export { sendNewCompMessage };

@@ -1,6 +1,7 @@
+import { prop } from 'ramda';
+
 import Wcalive from '../models/wca-live.js';
 import Wcacomp from '../models/wca-comp.js';
-import { prop } from 'ramda';
 
 const updateWcalive = (doc) => Wcalive.findOneAndReplace({}, doc).exec();
 

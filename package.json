@@ -11,7 +11,6 @@
     "codestyle": "prettier -c **/*.js *.json"
   },
   "dependencies": {
-    "bluebird": "^3.7.2",
     "chalk": "^4.1.1",
     "country-code-emoji": "^2.3.0",
     "country-list": "^2.2.0",

@@ -1,15 +1,15 @@
+import { difference, map } from 'ramda';
+import { MessageEmbed } from 'discord.js';
+
 import {
   countryNameToFlagEmoji,
-  eventToEmoji,
-  formatJSON,
   getColorOfTag,
   getRecentRecords,
   getResultType,
 } from '../helpers/wca-live-helpers.js';
 import { getWcalive, updateWcalive } from './db-controller.js';
-import { difference, map } from 'ramda';
 import { centisecondsToTime } from '../tools/calculator.js';
-import { MessageEmbed } from 'discord.js';
+import { eventToEmoji, formatJSON } from '../helpers/global-helpers.js';
 
 const getNewRecords = async () => {
   const recentRecords = await getRecentRecords();
