@@ -2,12 +2,14 @@ import {
   countryNameToFlagEmoji,
   eventToEmoji,
   formatJSON,
+  getColorOfTag,
   getRecentRecords,
-  tagToEmoji,
+  getResultType,
 } from '../helpers/wca-live-helpers.js';
 import { getWcalive, updateWcalive } from './db-controller.js';
 import { difference, map } from 'ramda';
 import { centisecondsToTime } from '../tools/calculator.js';
+import { MessageEmbed } from 'discord.js';
 
 const getNewRecords = async () => {
   const newRecords = await getRecentRecords();
@@ -22,24 +24,36 @@ const getNewRecords = async () => {
 };
 
 /*
- * Format: {name} ({country} {flag_emoji}) a battu le {WR/CR/NR} {single/average}
- *         de {event} {event_emoji} avec un score de {result} ({competition})
- *         {wca_live_url}
+ * Format:
+ * Title: {event} {event_emoji} {single/average/mean} of {result}
+ * Link: {wca_live_url}
+ * Description: {name} from {country} {flag_emoji}
+ * Image: Image of WR/CR/NR
  */
 const formatRecord = (records) =>
   map(
     (r) =>
-      `${r.result.person.name} (${
-        r.result.person.country.name
-      } ${countryNameToFlagEmoji(r.result.person.country.name)}) a battu le ${
-        tagToEmoji[r.tag]
-      } ${r.type} de ${r.result.round.competitionEvent.event.name} ${
-        eventToEmoji[r.result.round.competitionEvent.event.id]
-      } avec un score de **${centisecondsToTime(r.attemptResult)}** (${
-        r.result.round.competitionEvent.competition.name
-      })\n<https://live.worldcubeassociation.org/competitions/${
-        r.result.round.competitionEvent.competition.id
-      }/rounds/${r.result.round.id}>`,
+      new MessageEmbed()
+        .setTitle(
+          `${r.result.round.competitionEvent.event.name} ${
+            eventToEmoji[r.result.round.competitionEvent.event.id]
+          } ${getResultType(
+            r.type,
+            r.result.round.competitionEvent.event.id
+          )} of ${centisecondsToTime(r.attemptResult)}`
+        )
+        .setURL(
+          `https://live.worldcubeassociation.org/competitions/${r.result.round.competitionEvent.competition.id}/rounds/${r.result.round.id}`
+        )
+        .setDescription(
+          `${r.result.person.name} from ${
+            r.result.person.country.name
+          } ${countryNameToFlagEmoji(r.result.person.country.name)}`
+        )
+        .setColor(getColorOfTag[r.tag])
+        .setThumbnail(
+          `https://raw.githubusercontent.com/Nogesma/wca-bot/main/img/${r.tag}.png`
+        ),
     records
   );
 

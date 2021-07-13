@@ -2,6 +2,7 @@ import { graphql } from 'graphql';
 import { UrlLoader, loadSchema } from 'graphql-tools';
 import { getCode } from 'country-list';
 import countryCodeEmoji from 'country-code-emoji';
+import { equals, includes } from 'ramda';
 
 const getSchema = await loadSchema(
   'https://live.worldcubeassociation.org/api/graphql',
@@ -21,12 +22,6 @@ const getRecentRecords = async () =>
 const formatJSON = (json) => JSON.parse(JSON.stringify(json));
 
 const countryNameToFlagEmoji = (name) => countryCodeEmoji(getCode(name));
-
-const tagToEmoji = {
-  WR: '<:WR:369397960926298112>',
-  CR: '<:CR:369398840928894976>',
-  NR: '<:NR:369399233867939840>',
-};
 
 const eventToEmoji = {
   333: '<:3x3solved:693841238461382739>',
@@ -48,10 +43,24 @@ const eventToEmoji = {
   pyram: '<:pyraminx:693881128981102682>',
 };
 
+const getColorOfTag = {
+  WR: '#f44336',
+  CR: '#ffeb3b',
+  NR: '#00e676',
+};
+
+const getResultType = (t, e) =>
+  equals('average', t)
+    ? includes(e, ['666', '777', '333bf', '444bf', '555bf', '333fm'])
+      ? 'mean'
+      : t
+    : t;
+
 export {
   getRecentRecords,
   formatJSON,
   countryNameToFlagEmoji,
-  tagToEmoji,
   eventToEmoji,
+  getColorOfTag,
+  getResultType,
 };
