@@ -1,4 +1,12 @@
-import { __, difference, filter, includes, map, propSatisfies } from 'ramda';
+import {
+  __,
+  difference,
+  filter,
+  includes,
+  map,
+  prepend,
+  propSatisfies,
+} from 'ramda';
 import countryCodeEmoji from 'country-code-emoji';
 import * as Discord from 'discord.js';
 import { getName } from 'country-list';
@@ -78,7 +86,10 @@ const formatCompetition = map((comp) =>
             prettifyTwoDates(comp.registration_open, comp.registration_close),
             true
           ),
-        reactions: map((id) => eventToEmoji[id], comp.event_ids),
+        reactions: prepend(
+          '<:WCA:456059019677663233>',
+          map((id) => eventToEmoji[id], comp.event_ids)
+        ),
       }
     : {
         embed: new Discord.MessageEmbed()
@@ -89,7 +100,7 @@ const formatCompetition = map((comp) =>
           )
           .setColor('#FF0000')
           .setDescription('La compétition a été anulée.'),
-        reactions: [],
+        reactions: ['<:WCA:456059019677663233>'],
       }
 );
 
