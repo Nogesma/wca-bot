@@ -1,6 +1,6 @@
 import { graphql } from 'graphql';
 import { UrlLoader, loadSchema } from 'graphql-tools';
-import { getCode } from 'country-list';
+import { countryToAlpha2 } from 'country-to-iso';
 import countryCodeEmoji from 'country-code-emoji';
 import {
   cond,
@@ -61,7 +61,7 @@ const getRecentRecords = async () =>
     `
   ).then((response) => response.data);
 
-const countryNameToFlagEmoji = (name) => countryCodeEmoji(getCode(name));
+const countryNameToFlagEmoji = pipe(countryToAlpha2, countryCodeEmoji);
 
 const getColorOfTag = {
   WR: '#f44336',

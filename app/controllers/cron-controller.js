@@ -1,5 +1,5 @@
 import { CronJob } from 'cron';
-import { forEach, map } from 'ramda';
+import { forEach } from 'ramda';
 
 import logger from '../tools/logger.js';
 import { formatRecord, getNewRecords } from './wca-live-controller.js';
@@ -40,7 +40,7 @@ const startCron = (bot) => {
         forEach(({ embed, reactions }) => {
           chan
             .send(embed)
-            .then((mess) => map((emoji) => mess.react(emoji), reactions));
+            .then((mess) => forEach((emoji) => mess.react(emoji), reactions));
         }, formattedCompetitions);
       },
       start: false,
