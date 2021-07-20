@@ -3,12 +3,12 @@ import { MessageEmbed } from 'discord.js';
 
 import {
   countryNameToFlagEmoji,
+  formatAttemptResult,
   getColorOfTag,
   getRecentRecords,
   getResultType,
 } from '../helpers/wca-live-helpers.js';
 import { getWcalive, updateWcalive } from './db-controller.js';
-import { centisecondsToTime } from '../tools/calculator.js';
 import { eventToEmoji, formatJSON } from '../helpers/global-helpers.js';
 
 const getNewRecords = async () => {
@@ -40,7 +40,10 @@ const formatRecord = (records) =>
           } ${getResultType(
             r.type,
             r.result.round.competitionEvent.event.id
-          )} of ${centisecondsToTime(r.attemptResult)}`
+          )} of ${formatAttemptResult({
+            attemptResult: r.attemptResult,
+            eventId: r.result.round.competitionEvent.event.id,
+          })}`
         )
         .setURL(
           `https://live.worldcubeassociation.org/competitions/${r.result.round.competitionEvent.competition.id}/rounds/${r.result.round.id}`

@@ -1,4 +1,4 @@
-import { divide } from 'ramda';
+import { always, divide, gte, ifElse } from 'ramda';
 
 const centisecondsToTime = (time) => {
   const t = divide(time, 100);
@@ -11,4 +11,19 @@ const centisecondsToTime = (time) => {
   return `${min ? min + ':' : ''}${s}`;
 };
 
-export { centisecondsToTime };
+const decodeMbldAttemptResult = ifElse(
+  gte(0),
+  always({ solved: 0, attempted: 0, centiseconds: 0 }),
+  (value) => {
+    const missed = value % 100;
+    const points = 99 - (Math.floor(value / 1e7) % 100);
+    const solved = points + missed;
+    return {
+      solved,
+      attempted: solved + missed,
+      centiseconds: (Math.floor(value / 100) % 1e5) * 100,
+    };
+  }
+);
+
+export { centisecondsToTime, decodeMbldAttemptResult };

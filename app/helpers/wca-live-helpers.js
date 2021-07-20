@@ -2,7 +2,22 @@ import { graphql } from 'graphql';
 import { UrlLoader, loadSchema } from 'graphql-tools';
 import { getCode } from 'country-list';
 import countryCodeEmoji from 'country-code-emoji';
-import { equals, includes } from 'ramda';
+import {
+  cond,
+  equals,
+  ifElse,
+  includes,
+  lt,
+  pipe,
+  prop,
+  propEq,
+  T,
+  toString,
+} from 'ramda';
+import {
+  centisecondsToTime,
+  decodeMbldAttemptResult,
+} from '../tools/calculator';
 
 const getSchema = await loadSchema(
   'https://live.worldcubeassociation.org/api/graphql',
@@ -61,9 +76,33 @@ const getResultType = (t, e) =>
       : t
     : t;
 
+/* Note: FM singles are stored as the number of moves (e.g. 25),
+   while averages are stored with 2 decimal places (e.g. 2533 for an average of 25.33 moves). */
+const formatFmAttemptResult = pipe(
+  prop('attemptResult'),
+  ifElse(lt(1000), centisecondsToTime, toString)
+);
+
+const formatMbldAttemptResult = pipe(
+  prop('attemptResult'),
+  decodeMbldAttemptResult,
+  ({ solved, attempted, centiseconds }) =>
+    `${solved}/${attempted} ${centisecondsToTime(centiseconds).replace(
+      /\.00$/,
+      ''
+    )}`
+);
+
+const formatAttemptResult = cond([
+  [propEq('eventId')('333fm'), formatFmAttemptResult],
+  [propEq('eventId')('333mbf'), formatMbldAttemptResult],
+  [T, pipe(prop('attemptResult'), centisecondsToTime)],
+]);
+
 export {
   getRecentRecords,
   countryNameToFlagEmoji,
   getColorOfTag,
   getResultType,
+  formatAttemptResult,
 };
