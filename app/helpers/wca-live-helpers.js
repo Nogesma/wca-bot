@@ -17,7 +17,7 @@ import {
 import {
   centisecondsToTime,
   decodeMbldAttemptResult,
-} from '../tools/calculator';
+} from '../tools/calculator.js';
 
 const getSchema = await loadSchema(
   'https://live.worldcubeassociation.org/api/graphql',
