@@ -99,7 +99,7 @@ const formatCompetition = map((comp) =>
             'https://raw.githubusercontent.com/thewca/worldcubeassociation.org/e974e9020e8c8a1e562c57695b96b312efb8eafa/WcaOnRails/public/files/WCAlogo_50x50.png'
           )
           .setColor('#FF0000')
-          .setDescription('La compétition a été anulée.'),
+          .setDescription('La compétition a été annulée.'),
         reactions: ['<:WCA:456059019677663233>'],
       }
 );
