@@ -100,7 +100,7 @@ const formatCompetition = map((comp) =>
           )
           .setColor('#FF0000')
           .setDescription('La compétition a été annulée.'),
-        reactions: ['<:WCA:456059019677663233>'],
+        reactions: ['<:RIP:421349840467787776>'],
       }
 );
 
