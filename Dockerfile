@@ -4,6 +4,8 @@ ENV NODE_ENV production
 
 WORKDIR /usr/src/app
 
+COPY LICENSE .
+
 COPY package.json .
 COPY yarn.lock .
 

@@ -11,6 +11,7 @@
     "codestyle": "prettier -c **/*.js *.json"
   },
   "dependencies": {
+    "aws-amplify": "^4.2.2",
     "chalk": "^4.1.1",
     "country-code-emoji": "^2.3.0",
     "country-list": "^2.2.0",
@@ -19,14 +20,14 @@
     "dayjs": "^1.10.6",
     "discord.js": "^12.5.3",
     "graphql": "^15.5.1",
-    "graphql-tools": "^7.0.5",
+    "graphql-tag": "^2.12.5",
     "mongoose": "^5.13.2",
     "node-fetch": "^2.6.1",
     "ramda": "^0.27.1",
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "@types/node": "^16.0.0",
+    "@types/node": "^16.4.6",
     "dotenv": "^10.0.0",
     "nodemon": "^2.0.12",
     "prettier": "^2.3.2"

@@ -1,5 +1,3 @@
-import { graphql } from 'graphql';
-import { UrlLoader, loadSchema } from 'graphql-tools';
 import { countryToAlpha2 } from 'country-to-iso';
 import countryCodeEmoji from 'country-code-emoji';
 import {
@@ -14,52 +12,46 @@ import {
   T,
   toString,
 } from 'ramda';
+import { API, graphqlOperation } from 'aws-amplify';
+import { gql } from 'graphql-tag';
 import {
   centisecondsToTime,
   decodeMbldAttemptResult,
 } from '../tools/calculator.js';
 
-const getSchema = await loadSchema(
-  'https://live.worldcubeassociation.org/api/graphql',
+const query = gql`
   {
-    loaders: [new UrlLoader()],
-  }
-);
-
-const getRecentRecords = async () =>
-  graphql(
-    await getSchema,
-    `
-      {
-        recentRecords {
-          type
-          tag
-          attemptResult
-          result {
-            person {
-              name
-              country {
-                name
-              }
-            }
-            round {
+    recentRecords {
+      type
+      tag
+      attemptResult
+      result {
+        person {
+          name
+          country {
+            name
+          }
+        }
+        round {
+          id
+          competitionEvent {
+            event {
               id
-              competitionEvent {
-                event {
-                  id
-                  name
-                }
-                competition {
-                  id
-                  name
-                }
-              }
+              name
+            }
+            competition {
+              id
+              name
             }
           }
         }
       }
-    `
-  ).then((response) => response.data);
+    }
+  }
+`;
+
+const getRecentRecords = () =>
+  API.graphql(graphqlOperation(query)).then((res) => res.data);
 
 const countryNameToFlagEmoji = pipe(countryToAlpha2, countryCodeEmoji);
 

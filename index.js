@@ -4,12 +4,19 @@ import mongoose from 'mongoose';
 
 import { startCron, stopCron } from './app/controllers/cron-controller.js';
 import { incomingMessage } from './app/controllers/message-controller.js';
+import { Amplify } from 'aws-amplify';
 
 mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/wca', {
   useNewUrlParser: true,
   useFindAndModify: false,
   useCreateIndex: true,
   useUnifiedTopology: true,
+});
+
+Amplify.configure({
+  API: {
+    graphql_endpoint: 'https://live.worldcubeassociation.org/api/graphql',
+  },
 });
 
 const bot = new discord.Client();
