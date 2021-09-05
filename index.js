@@ -6,12 +6,7 @@ import { startCron, stopCron } from './app/controllers/cron-controller.js';
 import { incomingMessage } from './app/controllers/message-controller.js';
 import { Amplify } from 'aws-amplify';
 
-mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/wca', {
-  useNewUrlParser: true,
-  useFindAndModify: false,
-  useCreateIndex: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/wca');
 
 Amplify.configure({
   API: {
