@@ -22,7 +22,7 @@ const sendNewCompMessage = async ({ channel, args }) => {
     );
 
     wcaChan
-      .send(embed)
+      .send({ embeds: [embed] })
       .then((mess) => map((emoji) => mess.react(emoji), reactions));
 
     channel.send('La compétition a été annoncée.');

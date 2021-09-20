@@ -11,25 +11,25 @@
     "codestyle": "prettier -c **/*.js *.json"
   },
   "dependencies": {
-    "aws-amplify": "^4.2.2",
-    "chalk": "^4.1.1",
+    "aws-amplify": "^4.2.10",
+    "chalk": "^4.1.2",
     "country-code-emoji": "^2.3.0",
     "country-list": "^2.2.0",
     "country-to-iso": "^1.1.1",
     "cron": "^1.8.2",
-    "dayjs": "^1.10.6",
-    "discord.js": "^12.5.3",
-    "graphql": "^15.5.1",
+    "dayjs": "^1.10.7",
+    "discord.js": "^13.1.0",
+    "graphql": "^15.5.3",
     "graphql-tag": "^2.12.5",
-    "mongoose": "^6.0.3",
+    "mongoose": "^6.0.6",
     "node-fetch": "^3.0.0",
     "ramda": "^0.27.1",
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "@types/node": "^16.7.10",
+    "@types/node": "^16.9.4",
     "dotenv": "^10.0.0",
     "nodemon": "^2.0.12",
-    "prettier": "^2.3.2"
+    "prettier": "^2.4.1"
   }
 }

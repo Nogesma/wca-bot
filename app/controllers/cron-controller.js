@@ -21,7 +21,10 @@ const startCron = (bot) => {
 
         const chan = await bot.channels.fetch(process.env.WCA_LIVE);
 
-        forEach((message) => chan.send(message), formattedRecords);
+        forEach(
+          (message) => chan.send({ embeds: [message] }),
+          formattedRecords
+        );
       },
       start: false,
       timeZone: 'Europe/Paris',
@@ -30,7 +33,7 @@ const startCron = (bot) => {
 
   cronList_.push(
     new CronJob({
-      cronTime: '0 30 6 * * *',
+      cronTime: '40 12 * * * *',
       onTick: async () => {
         const newCompetitions = await getNewCompetitions();
         const formattedCompetitions = formatCompetition(newCompetitions);
@@ -39,7 +42,7 @@ const startCron = (bot) => {
 
         forEach(({ embed, reactions }) => {
           chan
-            .send(embed)
+            .send({ embeds: [embed] })
             .then((mess) => forEach((emoji) => mess.react(emoji), reactions));
         }, formattedCompetitions);
       },

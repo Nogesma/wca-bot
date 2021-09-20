@@ -75,7 +75,7 @@ const formatCompetition = map((comp) =>
             'Adresse',
             `[${comp.venue_address}](https://duckduckgo.com/?ia=maps&iaxm=maps&q=${comp.latitude_degrees},${comp.longitude_degrees})`
           )
-          .addField('Competiteurs max', comp.competitor_limit)
+          .addField('Competiteurs max', comp.competitor_limit.toString())
           .addField(
             'Date',
             prettifyTwoDates(comp.start_date, comp.end_date),

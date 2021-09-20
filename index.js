@@ -1,4 +1,4 @@
-import discord from 'discord.js';
+import discord, { Intents } from 'discord.js';
 import logger from './app/tools/logger.js';
 import mongoose from 'mongoose';
 
@@ -14,17 +14,21 @@ Amplify.configure({
   },
 });
 
-const bot = new discord.Client();
+const bot = new discord.Client({
+  intents: [
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+  ],
+});
 
 bot.on('ready', () => {
   logger.info('Bot ready');
   startCron(bot);
-  bot.user.setPresence({
-    activity: { name: 'for new records', type: 3 },
-  });
+  bot.user.setActivity({ name: 'for new records', type: 3 });
 });
 
-bot.on('message', incomingMessage);
+bot.on('messageCreate', incomingMessage);
 
 bot.login(process.env.TOKEN);
 
