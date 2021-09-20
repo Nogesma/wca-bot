@@ -87,7 +87,7 @@ const formatCompetition = map((comp) =>
             true
           ),
         reactions: prepend(
-          '<:WCA:456059019677663233>',
+          '<:WCA:862620349376364554>',
           map((id) => eventToEmoji[id], comp.event_ids)
         ),
       }
