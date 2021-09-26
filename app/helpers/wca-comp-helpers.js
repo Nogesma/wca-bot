@@ -30,12 +30,21 @@ const getUpcomingCompetitions = async () => {
   );
 };
 
-const prettifyTwoDates = (date1, date2) => {
-  const formattedDate = dayjs(date2).format('DD/MM/YYYY');
+const prettifyTwoDates = (startDateStr, endDateStr) => {
+  const startDate = dayjs(startDateStr);
+  const endDate = dayjs(endDateStr);
+  const formattedDate = endDate.format('DD/MM/YYYY');
 
-  return dayjs(date1).format('DD/MM/YYYY') === formattedDate
-    ? formattedDate
-    : `${dayjs(date1).format('DD')} au ${formattedDate}`;
+  if (startDate.year() === endDate.year()) {
+    if (startDate.month() === endDate.month()) {
+      if (startDate.day() === endDate.day()) {
+        return formattedDate;
+      }
+      return `${startDate.format('DD')} au ${formattedDate}`;
+    }
+    return `${startDate.format('DD/MM')} au ${formattedDate}`;
+  }
+  return `${startDate.format('DD/MM/YYYY')} au ${formattedDate}`;
 };
 
 export { getUpcomingCompetitions, prettifyTwoDates };
