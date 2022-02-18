@@ -13,5 +13,6 @@ RUN yarn
 
 COPY app app/
 COPY index.js .
+COPY init.js .
 
 CMD ["yarn", "run", "prod"]
