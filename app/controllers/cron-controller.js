@@ -33,7 +33,7 @@ const startCron = (bot) => {
 
   cronList_.push(
     new CronJob({
-      cronTime: '40 12 * * * *',
+      cronTime: '0 0 6 * * *',
       onTick: async () => {
         const newCompetitions = await getNewCompetitions();
         const formattedCompetitions = formatCompetition(newCompetitions);

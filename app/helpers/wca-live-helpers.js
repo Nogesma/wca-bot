@@ -51,7 +51,7 @@ const query = gql`
 `;
 
 const getRecentRecords = () =>
-  API.graphql(graphqlOperation(query)).then((res) => res.data);
+  API.graphql(graphqlOperation(query)).then((res) => res.data.recentRecords);
 
 const countryNameToFlagEmoji = pipe(countryToAlpha2, countryCodeEmoji);
 

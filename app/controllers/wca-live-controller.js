@@ -9,18 +9,15 @@ import {
   getResultType,
 } from '../helpers/wca-live-helpers.js';
 import { getWcalive, updateWcalive } from './db-controller.js';
-import { eventToEmoji, formatJSON } from '../helpers/global-helpers.js';
+import { eventToEmoji } from '../helpers/global-helpers.js';
 
 const getNewRecords = async () => {
   const recentRecords = await getRecentRecords();
+  const oldRecords = await getWcalive();
 
-  const formattedRecentRecords = formatJSON(recentRecords.recentRecords);
+  updateWcalive(recentRecords);
 
-  const oldRecords = formatJSON(await getWcalive());
-
-  await updateWcalive(recentRecords);
-
-  return difference(formattedRecentRecords, oldRecords);
+  return difference(recentRecords, oldRecords);
 };
 
 /*

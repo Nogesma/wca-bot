@@ -1,7 +1,3 @@
-// This function is used to remove the inconsistencies between mongodb and
-// graphql json, which allows for easier comparison
-const formatJSON = (json) => JSON.parse(JSON.stringify(json));
-
 const eventToEmoji = {
   333: '<:3x3solved:889577416660516875>',
   222: '<:2x2x2:889577416861810728>',
@@ -22,4 +18,4 @@ const eventToEmoji = {
   pyram: '<:pyraminx:889577417943969862>',
 };
 
-export { formatJSON, eventToEmoji };
+export { eventToEmoji };

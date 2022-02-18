@@ -247,3 +247,5 @@ fabric.properties
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+
+data/*

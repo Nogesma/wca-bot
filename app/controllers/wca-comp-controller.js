@@ -12,18 +12,17 @@ import * as Discord from 'discord.js';
 import { getName } from 'country-list';
 
 import { getWcacomp, updateWcacomp } from './db-controller.js';
-import { eventToEmoji, formatJSON } from '../helpers/global-helpers.js';
+import { eventToEmoji } from '../helpers/global-helpers.js';
 import {
   getUpcomingCompetitions,
   prettifyTwoDates,
 } from '../helpers/wca-comp-helpers.js';
 
 const getNewCompetitions = async () => {
-  const upcomingCompetitions = formatJSON(await getUpcomingCompetitions());
+  const upcomingCompetitions = await getUpcomingCompetitions();
+  const oldCompetitions = await getWcacomp();
 
-  const oldCompetitions = formatJSON(await getWcacomp()).competitions;
-
-  await updateWcacomp(upcomingCompetitions);
+  updateWcacomp(upcomingCompetitions);
 
   const newComps = difference(upcomingCompetitions, oldCompetitions);
 

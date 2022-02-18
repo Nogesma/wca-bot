@@ -1,16 +1,15 @@
-import { prop } from 'ramda';
+import * as fs from 'fs';
 
-import Wcalive from '../models/wca-live.js';
-import Wcacomp from '../models/wca-comp.js';
+const updateWcalive = (doc) =>
+  fs.writeFile('./data/wcalive.json', JSON.stringify(doc), 'utf8', () => {});
 
-const updateWcalive = (doc) => Wcalive.findOneAndReplace({}, doc).exec();
-
-const getWcalive = async () =>
-  prop('recentRecords', await Wcalive.findOne({}).exec());
+const getWcalive = () =>
+  JSON.parse(fs.readFileSync('./data/wcalive.json', 'utf8'));
 
 const updateWcacomp = (doc) =>
-  Wcacomp.findOneAndReplace({}, { competitions: doc }).exec();
+  fs.writeFile('./data/wcacomp.json', JSON.stringify(doc), 'utf8', () => {});
 
-const getWcacomp = async () => await Wcacomp.findOne({}).exec();
+const getWcacomp = () =>
+  JSON.parse(fs.readFileSync('./data/wcacomp.json', 'utf8'));
 
 export { updateWcalive, getWcalive, updateWcacomp, getWcacomp };
