@@ -6,17 +6,17 @@ import {
   map,
   prepend,
   propSatisfies,
-} from 'ramda';
-import countryCodeEmoji from 'country-code-emoji';
-import * as Discord from 'discord.js';
-import { getName } from 'country-list';
+} from "ramda";
+import countryCodeEmoji from "country-code-emoji";
+import * as Discord from "discord.js";
+import { getName } from "country-list";
 
-import { getWcacomp, updateWcacomp } from './db-controller.js';
-import { eventToEmoji } from '../helpers/global-helpers.js';
+import { getWcacomp, updateWcacomp } from "./db-controller.js";
+import { eventToEmoji } from "../helpers/global-helpers.js";
 import {
   getUpcomingCompetitions,
   prettifyTwoDates,
-} from '../helpers/wca-comp-helpers.js';
+} from "../helpers/wca-comp-helpers.js";
 
 const getNewCompetitions = async () => {
   const upcomingCompetitions = await getUpcomingCompetitions();
@@ -29,23 +29,23 @@ const getNewCompetitions = async () => {
   return filter(
     propSatisfies(
       includes(__, [
-        'FR',
-        'GB',
-        'BE',
-        'CH',
-        'DE',
-        'NL',
-        'ES',
-        'PT',
-        'IT',
-        'CA',
-        'AD',
-        'MC',
-        'SM',
-        'LU',
-        'LI',
+        "FR",
+        "GB",
+        "BE",
+        "CH",
+        "DE",
+        "NL",
+        "ES",
+        "PT",
+        "IT",
+        "CA",
+        "AD",
+        "MC",
+        "SM",
+        "LU",
+        "LI",
       ]),
-      'country_iso2'
+      "country_iso2"
     ),
     newComps
   );
@@ -58,35 +58,35 @@ const formatCompetition = map((comp) =>
           .setTitle(`**${comp.name}**`)
           .setURL(comp.url)
           .setThumbnail(
-            'https://raw.githubusercontent.com/thewca/worldcubeassociation.org/e974e9020e8c8a1e562c57695b96b312efb8eafa/WcaOnRails/public/files/WCAlogo_50x50.png'
+            "https://raw.githubusercontent.com/thewca/worldcubeassociation.org/e974e9020e8c8a1e562c57695b96b312efb8eafa/WcaOnRails/public/files/WCAlogo_50x50.png"
           )
-          .setColor('#00FF00')
-          .setDescription('')
-          .addField('Ville', comp.city, true)
+          .setColor("#00FF00")
+          .setDescription("")
+          .addField("Ville", comp.city, true)
           .addField(
-            'Pays',
+            "Pays",
             `__**${getName(comp.country_iso2)}**__ ${countryCodeEmoji(
               comp.country_iso2
             )}`,
             true
           )
           .addField(
-            'Adresse',
+            "Adresse",
             `[${comp.venue_address}](https://duckduckgo.com/?ia=maps&iaxm=maps&q=${comp.latitude_degrees},${comp.longitude_degrees})`
           )
-          .addField('Competiteurs max', comp.competitor_limit.toString())
+          .addField("Competiteurs max", comp.competitor_limit.toString())
           .addField(
-            'Date',
+            "Date",
             prettifyTwoDates(comp.start_date, comp.end_date),
             true
           )
           .addField(
-            'Inscriptions',
+            "Inscriptions",
             prettifyTwoDates(comp.registration_open, comp.registration_close),
             true
           ),
         reactions: prepend(
-          '<:WCA:862620349376364554>',
+          "<:WCA:862620349376364554>",
           map((id) => eventToEmoji[id], comp.event_ids)
         ),
       }
@@ -95,11 +95,11 @@ const formatCompetition = map((comp) =>
           .setTitle(`**${comp.name}**`)
           .setURL(comp.url)
           .setThumbnail(
-            'https://raw.githubusercontent.com/thewca/worldcubeassociation.org/e974e9020e8c8a1e562c57695b96b312efb8eafa/WcaOnRails/public/files/WCAlogo_50x50.png'
+            "https://raw.githubusercontent.com/thewca/worldcubeassociation.org/e974e9020e8c8a1e562c57695b96b312efb8eafa/WcaOnRails/public/files/WCAlogo_50x50.png"
           )
-          .setColor('#FF0000')
-          .setDescription('La compétition a été annulée.'),
-        reactions: ['<:RIP:421349840467787776>'],
+          .setColor("#FF0000")
+          .setDescription("La compétition a été annulée."),
+        reactions: ["<:RIP:421349840467787776>"],
       }
 );
 

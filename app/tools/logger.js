@@ -1,23 +1,23 @@
-import chalk from 'chalk';
-import { equals, always, cond, T, join, toUpper } from 'ramda';
-import pkg from 'winston';
+import chalk from "chalk";
+import { equals, always, cond, T, join, toUpper } from "ramda";
+import pkg from "winston";
 const { createLogger, format, transports } = pkg;
 
 const { combine, timestamp, printf } = format;
 
 const chooseColor = cond([
-  [equals('silly'), always(chalk.gray)],
-  [equals('debug'), always(chalk.yellow)],
-  [equals('verbose'), always(chalk.green)],
-  [equals('info'), always(chalk.blue)],
-  [equals('warn'), always(chalk.magenta)],
-  [equals('error'), always(chalk.red)],
+  [equals("silly"), always(chalk.gray)],
+  [equals("debug"), always(chalk.yellow)],
+  [equals("verbose"), always(chalk.green)],
+  [equals("info"), always(chalk.blue)],
+  [equals("warn"), always(chalk.magenta)],
+  [equals("error"), always(chalk.red)],
   [T, always(chalk.white)],
 ]);
 
 const myFormat = printf((info) => {
   const color = chooseColor(info.level);
-  return join(' ', [
+  return join(" ", [
     color(`[${info.timestamp}] ${toUpper(info.level)}:`),
     info.message,
   ]);
@@ -28,26 +28,26 @@ const wl = createLogger({
   transports: [new transports.Console()],
 });
 
-wl.level = process.env.LOG_LEVEL || 'info';
+wl.level = process.env.LOG_LEVEL || "info";
 
 export default {
   silly(msg) {
-    wl.log('silly', msg);
+    wl.log("silly", msg);
   },
   debug(msg) {
-    wl.log('debug', msg);
+    wl.log("debug", msg);
   },
   verbose(msg) {
-    wl.log('verbose', msg);
+    wl.log("verbose", msg);
   },
   info(msg) {
-    wl.log('info', msg);
+    wl.log("info", msg);
   },
   warn(msg) {
-    wl.log('warn', msg);
+    wl.log("warn", msg);
   },
   error(msg) {
-    wl.log('error', msg);
+    wl.log("error", msg);
   },
   log(level, msg) {
     wl.log(level, msg);

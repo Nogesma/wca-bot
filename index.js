@@ -1,13 +1,13 @@
-import discord, { Intents } from 'discord.js';
-import logger from './app/tools/logger.js';
+import discord, { Intents } from "discord.js";
+import logger from "./app/tools/logger.js";
 
-import { startCron, stopCron } from './app/controllers/cron-controller.js';
-import { incomingMessage } from './app/controllers/message-controller.js';
-import { Amplify } from 'aws-amplify';
+import { startCron, stopCron } from "./app/controllers/cron-controller.js";
+import { incomingMessage } from "./app/controllers/message-controller.js";
+import { Amplify } from "aws-amplify";
 
 Amplify.configure({
   API: {
-    graphql_endpoint: 'https://live.worldcubeassociation.org/api/graphql',
+    graphql_endpoint: "https://live.worldcubeassociation.org/api/graphql",
   },
 });
 
@@ -20,17 +20,17 @@ const bot = new discord.Client({
   ],
 });
 
-bot.on('ready', () => {
-  logger.info('Bot ready');
+bot.on("ready", () => {
+  logger.info("Bot ready");
   startCron(bot);
-  bot.user.setActivity({ name: 'for new records', type: 3 });
+  bot.user.setActivity({ name: "for new records", type: 3 });
 });
 
-bot.on('messageCreate', incomingMessage);
+bot.on("messageCreate", incomingMessage);
 
 bot.login(process.env.TOKEN);
 
-process.on('exit', () => {
+process.on("exit", () => {
   stopCron();
-  logger.info('Exiting');
+  logger.info("Exiting");
 });
