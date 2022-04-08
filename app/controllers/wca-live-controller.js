@@ -2,7 +2,6 @@ import { difference, map } from "ramda";
 import { MessageEmbed } from "discord.js";
 
 import {
-  countryNameToFlagEmoji,
   formatAttemptResult,
   getColorOfTag,
   getRecentRecords,
@@ -10,14 +9,15 @@ import {
 } from "../helpers/wca-live-helpers.js";
 import { getWcalive, updateWcalive } from "./db-controller.js";
 import { eventToEmoji } from "../helpers/global-helpers.js";
+import countryCodeEmoji from "country-code-emoji";
 
 const getNewRecords = async () => {
   const recentRecords = await getRecentRecords();
   const oldRecords = await getWcalive();
 
-  updateWcalive(recentRecords);
+  await updateWcalive(recentRecords);
 
-  return difference(recentRecords, oldRecords);
+  return oldRecords.length ? difference(recentRecords, oldRecords) : [];
 };
 
 /*
@@ -48,7 +48,7 @@ const formatRecord = (records) =>
         .setDescription(
           `${r.result.person.name} from ${
             r.result.person.country.name
-          } ${countryNameToFlagEmoji(r.result.person.country.name)}`
+          } ${countryCodeEmoji(r.result.person.country.iso2)}`
         )
         .setColor(getColorOfTag[r.tag])
         .setThumbnail(

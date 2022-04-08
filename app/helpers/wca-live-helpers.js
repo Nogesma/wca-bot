@@ -1,5 +1,3 @@
-import { countryToAlpha2 } from "country-to-iso";
-import countryCodeEmoji from "country-code-emoji";
 import {
   cond,
   equals,
@@ -29,6 +27,7 @@ const query = gql`
         person {
           name
           country {
+            iso2
             name
           }
         }
@@ -52,8 +51,6 @@ const query = gql`
 
 const getRecentRecords = () =>
   API.graphql(graphqlOperation(query)).then((res) => res.data.recentRecords);
-
-const countryNameToFlagEmoji = pipe(countryToAlpha2, countryCodeEmoji);
 
 const getColorOfTag = {
   WR: "#f44336",
@@ -91,10 +88,4 @@ const formatAttemptResult = cond([
   [T, pipe(prop("attemptResult"), centisecondsToTime)],
 ]);
 
-export {
-  getRecentRecords,
-  countryNameToFlagEmoji,
-  getColorOfTag,
-  getResultType,
-  formatAttemptResult,
-};
+export { getRecentRecords, getColorOfTag, getResultType, formatAttemptResult };

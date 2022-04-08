@@ -12,25 +12,24 @@
     "codestyle": "prettier -c **/*.js *.json"
   },
   "dependencies": {
-    "aws-amplify": "^4.3.14",
-    "chalk": "^5.0.0",
+    "aws-amplify": "^4.3.19",
+    "chalk": "^5.0.1",
     "country-code-emoji": "^2.3.0",
     "country-list": "^2.2.0",
-    "country-to-iso": "^1.1.1",
     "cron": "^1.8.2",
-    "dayjs": "^1.10.7",
+    "dayjs": "^1.11.0",
     "discord.js": "^13.6.0",
     "graphql": "^16.3.0",
     "graphql-tag": "^2.12.6",
-    "node-fetch": "^3.2.0",
+    "node-fetch": "^3.2.3",
     "ramda": "^0.28.0",
-    "winston": "^3.6.0"
+    "winston": "^3.7.2"
   },
   "devDependencies": {
-    "@types/node": "^17.0.18",
+    "@types/node": "^17.0.23",
     "dotenv": "^16.0.0",
     "nodemon": "^2.0.15",
-    "prettier": "^2.5.1"
+    "prettier": "^2.6.2"
   },
   "packageManager": "yarn@3.1.1"
 }

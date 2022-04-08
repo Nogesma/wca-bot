@@ -22,9 +22,11 @@ const getNewCompetitions = async () => {
   const upcomingCompetitions = await getUpcomingCompetitions();
   const oldCompetitions = await getWcacomp();
 
-  updateWcacomp(upcomingCompetitions);
+  await updateWcacomp(upcomingCompetitions);
 
-  const newComps = difference(upcomingCompetitions, oldCompetitions);
+  const newComps = oldCompetitions.length
+    ? difference(upcomingCompetitions, oldCompetitions)
+    : [];
 
   return filter(
     propSatisfies(

@@ -13,7 +13,7 @@ const cronList_ = [];
 const startCron = (bot) => {
   cronList_.push(
     new CronJob({
-      cronTime: "0 0 * * * *",
+      cronTime: "20 * * * * *",
       onTick: async () => {
         const newRecords = await getNewRecords();
 
