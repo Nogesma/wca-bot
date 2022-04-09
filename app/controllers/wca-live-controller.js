@@ -15,7 +15,7 @@ const getNewRecords = async () => {
   const recentRecords = await getRecentRecords();
   const oldRecords = await getWcalive();
 
-  await updateWcalive(recentRecords);
+  if (recentRecords.length) await updateWcalive(recentRecords);
 
   return oldRecords.length ? difference(recentRecords, oldRecords) : [];
 };

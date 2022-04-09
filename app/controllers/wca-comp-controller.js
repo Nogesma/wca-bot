@@ -22,7 +22,7 @@ const getNewCompetitions = async () => {
   const upcomingCompetitions = await getUpcomingCompetitions();
   const oldCompetitions = await getWcacomp();
 
-  await updateWcacomp(upcomingCompetitions);
+  if (upcomingCompetitions.length) await updateWcacomp(upcomingCompetitions);
 
   const newComps = oldCompetitions.length
     ? difference(upcomingCompetitions, oldCompetitions)
