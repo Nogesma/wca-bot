@@ -2994,13 +2994,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"country-to-iso@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "country-to-iso@npm:1.1.1"
-  checksum: 89b521fecff867f83c2901ef8ad50b30c9860b57446ca2dea716c9cf97ee83386fc6d65644f7294e650676cb7fd461f4391d2a87014660ce9dd11cd06fbb8f91
-  languageName: node
-  linkType: hard
-
 "cron@npm:^1.8.2":
   version: 1.8.2
   resolution: "cron@npm:1.8.2"
@@ -4979,7 +4972,6 @@ fsevents@~2.3.2:
     chalk: ^5.0.1
     country-code-emoji: ^2.3.0
     country-list: ^2.2.0
-    country-to-iso: ^1.1.1
     cron: ^1.8.2
     dayjs: ^1.11.0
     discord.js: ^13.6.0
