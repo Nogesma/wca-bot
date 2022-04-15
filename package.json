@@ -12,7 +12,7 @@
     "codestyle": "prettier -c **/*.js *.json"
   },
   "dependencies": {
-    "aws-amplify": "^4.3.19",
+    "aws-amplify": "^4.3.20",
     "chalk": "^5.0.1",
     "country-code-emoji": "^2.3.0",
     "country-list": "^2.2.0",
