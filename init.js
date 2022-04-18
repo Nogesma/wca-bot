@@ -1,4 +1,3 @@
-import { Amplify } from "aws-amplify";
 import * as fs from "fs";
 
 import {
@@ -9,12 +8,6 @@ import { getRecentRecords } from "./app/helpers/wca-live-helpers.js";
 import { getUpcomingCompetitions } from "./app/helpers/wca-comp-helpers.js";
 
 if (fs.existsSync("./data")) process.exit(0);
-
-Amplify.configure({
-  API: {
-    graphql_endpoint: "https://live.worldcubeassociation.org/api/graphql",
-  },
-});
 
 fs.mkdirSync("./data");
 

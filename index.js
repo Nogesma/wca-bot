@@ -3,13 +3,6 @@ import logger from "./app/tools/logger.js";
 
 import { startCron, stopCron } from "./app/controllers/cron-controller.js";
 import { incomingMessage } from "./app/controllers/message-controller.js";
-import { Amplify } from "aws-amplify";
-
-Amplify.configure({
-  API: {
-    graphql_endpoint: "https://live.worldcubeassociation.org/api/graphql",
-  },
-});
 
 const bot = new discord.Client({
   intents: [

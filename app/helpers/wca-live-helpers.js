@@ -10,12 +10,16 @@ import {
   T,
   toString,
 } from "ramda";
-import { API, graphqlOperation } from "aws-amplify";
-import { gql } from "graphql-tag";
+import { gql, GraphQLClient } from "graphql-request";
+
 import {
   centisecondsToTime,
   decodeMbldAttemptResult,
 } from "../tools/calculator.js";
+
+const client = new GraphQLClient(
+  "https://live.worldcubeassociation.org/api/graphql"
+);
 
 const query = gql`
   {
@@ -50,7 +54,7 @@ const query = gql`
 `;
 
 const getRecentRecords = () =>
-  API.graphql(graphqlOperation(query)).then((res) => res.data.recentRecords);
+  client.request(query).then((res) => res.recentRecords);
 
 const getColorOfTag = {
   WR: "#f44336",
