@@ -18,7 +18,7 @@
     "cron": "^1.8.2",
     "dayjs": "^1.11.1",
     "discord.js": "^13.6.0",
-    "graphql": "^16.3.0",
+    "graphql": "^16.4.0",
     "graphql-request": "^4.2.0",
     "node-fetch": "^3.2.3",
     "ramda": "^0.28.0",
