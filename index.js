@@ -2,7 +2,6 @@ import discord, { Intents } from "discord.js";
 import logger from "./app/tools/logger.js";
 
 import { startCron, stopCron } from "./app/controllers/cron-controller.js";
-import { incomingMessage } from "./app/controllers/message-controller.js";
 
 const bot = new discord.Client({
   intents: [
@@ -18,8 +17,6 @@ bot.on("ready", () => {
   startCron(bot);
   bot.user.setActivity({ name: "for new records", type: 3 });
 });
-
-bot.on("messageCreate", incomingMessage);
 
 bot.login(process.env.TOKEN);
 
