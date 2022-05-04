@@ -15,7 +15,7 @@
     "chalk": "^5.0.1",
     "country-code-emoji": "^2.3.0",
     "country-list": "^2.2.0",
-    "cron": "^1.8.2",
+    "cron": "^2.0.0",
     "dayjs": "^1.11.1",
     "discord.js": "^13.6.0",
     "graphql": "^16.4.0",
