@@ -17,7 +17,7 @@
     "country-list": "^2.2.0",
     "cron": "^1.8.2",
     "dayjs": "^1.11.1",
-    "discord.js": "^13.6.0",
+    "discord.js": "^13.7.0",
     "graphql": "^16.4.0",
     "graphql-request": "^4.2.0",
     "node-fetch": "^3.2.3",
