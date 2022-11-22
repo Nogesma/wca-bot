@@ -1,5 +1,5 @@
 import { difference, map } from "ramda";
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 
 import {
   formatAttemptResult,
@@ -30,7 +30,7 @@ const getNewRecords = async () => {
 const formatRecord = (records) =>
   map(
     (r) =>
-      new MessageEmbed()
+      new EmbedBuilder()
         .setTitle(
           `${r.result.round.competitionEvent.event.name} ${
             eventToEmoji[r.result.round.competitionEvent.event.id]

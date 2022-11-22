@@ -1,14 +1,14 @@
-import discord, { Intents } from "discord.js";
+import { Client, GatewayIntentBits } from "discord.js";
 import logger from "./app/tools/logger.js";
 
 import { startCron, stopCron } from "./app/controllers/cron-controller.js";
 
-const bot = new discord.Client({
+const bot = new Client({
   intents: [
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
-    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildEmojisAndStickers,
+    GatewayIntentBits.GuildMessageReactions,
   ],
 });
 
