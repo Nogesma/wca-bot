@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 5
+  version: 6
   cacheKey: 8
 
 "@ardatan/aggregate-error@npm:0.0.6":
@@ -1261,10 +1261,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"country-list@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "country-list@npm:2.2.0"
-  checksum: 17b2dee70e0376235bb780582e23a64936b4cfa57764001cddf2224176739f1e55171d49d1801cce5d8a07031b729e87e1fdd1ff8dfa5d5f4bfd598567817cda
+"country-list@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "country-list@npm:2.3.0"
+  checksum: 91844d3640148cc04488fbbc29e46910018488d112ac8820be7cf7da5fde3aff354de5d89fe1fd4f20b52dcc7a991598cbe345e41ebb7f4397ab1549ac4651ec
   languageName: node
   linkType: hard
 
@@ -1972,7 +1972,7 @@ __metadata:
 
 "fsevents@patch:fsevents@~2.3.2#~builtin<compat/fsevents>":
   version: 2.3.2
-  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"
+  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
   dependencies:
     node-gyp: latest
   conditions: os=darwin
@@ -5169,7 +5169,7 @@ fsevents@~2.3.2:
     "@types/node": ^18.11.9
     chalk: ^5.1.2
     country-code-emoji: ^2.3.0
-    country-list: ^2.2.0
+    country-list: ^2.3.0
     cron: ^2.1.0
     dayjs: ^1.11.6
     discord.js: ^14.6.0

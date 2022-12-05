@@ -14,7 +14,7 @@
   "dependencies": {
     "chalk": "^5.1.2",
     "country-code-emoji": "^2.3.0",
-    "country-list": "^2.2.0",
+    "country-list": "^2.3.0",
     "cron": "^2.1.0",
     "dayjs": "^1.11.6",
     "discord.js": "^14.6.0",
