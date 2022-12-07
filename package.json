@@ -16,7 +16,7 @@
     "country-code-emoji": "^2.3.0",
     "country-list": "^2.2.0",
     "cron": "^2.1.0",
-    "dayjs": "^1.11.6",
+    "dayjs": "^1.11.7",
     "discord.js": "^14.6.0",
     "graphql": "^16.6.0",
     "graphql-request": "^5.0.0",
