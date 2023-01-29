@@ -18,4 +18,6 @@ const eventToEmoji = {
   pyram: "<:pyraminx:889577417943969862>",
 };
 
-export { eventToEmoji };
+const getCountryName = new Intl.DisplayNames(["fr"], { type: "region" });
+
+export { eventToEmoji, getCountryName };

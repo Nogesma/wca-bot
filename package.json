@@ -8,28 +8,26 @@
     "prod": "yarn run init && yarn run start",
     "init": "node init.js",
     "start": "node index.js",
-    "dev": "yarn run init && nodemon --ignore data/ --exec node --require dotenv/config --inspect index.js",
+    "dev": "node --require dotenv/config init.js && nodemon --ignore data/ --exec node --require dotenv/config --inspect index.js",
     "codestyle": "prettier -c **/*.js *.json"
   },
   "dependencies": {
-    "chalk": "^5.1.2",
+    "chalk": "^5.2.0",
     "country-code-emoji": "^2.3.0",
-    "country-list": "^2.2.0",
-    "cron": "^2.1.0",
-    "dayjs": "^1.11.6",
-    "discord.js": "^14.6.0",
+    "cron": "^2.2.0",
+    "dayjs": "^1.11.7",
+    "discord.js": "^14.7.1",
     "graphql": "^16.6.0",
-    "graphql-request": "^5.0.0",
+    "graphql-request": "^5.1.0",
     "node-fetch": "^3.3.0",
     "ramda": "^0.28.0",
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "@types/node": "^18.11.9",
+    "@types/node": "^18.11.18",
     "dotenv": "^16.0.3",
-    "graphql-cli": "^4.1.0",
     "nodemon": "^2.0.20",
-    "prettier": "^2.7.1"
+    "prettier": "^2.8.3"
   },
-  "packageManager": "yarn@3.3.0"
+  "packageManager": "yarn@3.3.1"
 }

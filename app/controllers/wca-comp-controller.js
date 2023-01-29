@@ -9,14 +9,14 @@ import {
 } from "ramda";
 import countryCodeEmoji from "country-code-emoji";
 import { EmbedBuilder } from "discord.js";
-import { getName } from "country-list";
 
 import { getWcacomp, updateWcacomp } from "./db-controller.js";
-import { eventToEmoji } from "../helpers/global-helpers.js";
+import { eventToEmoji, getCountryName } from "../helpers/global-helpers.js";
 import {
   getUpcomingCompetitions,
   prettifyTwoDates,
 } from "../helpers/wca-comp-helpers.js";
+import { COUNTRIES } from "../config.js";
 
 const getNewCompetitions = async () => {
   const upcomingCompetitions = await getUpcomingCompetitions();
@@ -29,26 +29,7 @@ const getNewCompetitions = async () => {
     : [];
 
   return filter(
-    propSatisfies(
-      includes(__, [
-        "FR",
-        "GB",
-        "BE",
-        "CH",
-        "DE",
-        "NL",
-        "ES",
-        "PT",
-        "IT",
-        "CA",
-        "AD",
-        "MC",
-        "SM",
-        "LU",
-        "LI",
-      ]),
-      "country_iso2"
-    ),
+    propSatisfies(includes(__, COUNTRIES), "country_iso2"),
     newComps
   );
 };
@@ -67,9 +48,9 @@ const formatCompetition = map((comp) =>
             { name: "Ville", value: comp.city, inline: true },
             {
               name: "Pays",
-              value: `__**${getName(comp.country_iso2)}**__ ${countryCodeEmoji(
+              value: `__**${getCountryName.of(
                 comp.country_iso2
-              )}`,
+              )}**__ ${countryCodeEmoji(comp.country_iso2)}`,
               inline: true,
             },
             {
@@ -98,6 +79,9 @@ const formatCompetition = map((comp) =>
           "<:WCA:862620349376364554>",
           map((id) => eventToEmoji[id], comp.event_ids)
         ),
+        country: `${countryCodeEmoji(comp.country_iso2)} ${getCountryName.of(
+          comp.country_iso2
+        )}`,
       }
     : {
         embed: new EmbedBuilder()
@@ -109,6 +93,9 @@ const formatCompetition = map((comp) =>
           .setColor("#FF0000")
           .setDescription("La compétition a été annulée."),
         reactions: ["<:RIP:421349840467787776>"],
+        country: `${countryCodeEmoji(comp.country_iso2)} ${getCountryName.of(
+          comp.country_iso2
+        )}`,
       }
 );
 

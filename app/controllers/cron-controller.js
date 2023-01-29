@@ -1,5 +1,5 @@
 import { CronJob } from "cron";
-import { forEach } from "ramda";
+import { map } from "ramda";
 
 import logger from "../tools/logger.js";
 import { formatRecord, getNewRecords } from "./wca-live-controller.js";
@@ -21,9 +21,8 @@ const startCron = (bot) => {
 
         const chan = await bot.channels.fetch(process.env.WCA_LIVE);
 
-        forEach(
-          (message) => chan.send({ embeds: [message] }),
-          formattedRecords
+        await Promise.all(
+          map((message) => chan.send({ embeds: [message] }), formattedRecords)
         );
       },
       start: false,
@@ -38,13 +37,18 @@ const startCron = (bot) => {
         const newCompetitions = await getNewCompetitions();
         const formattedCompetitions = formatCompetition(newCompetitions);
 
-        const chan = await bot.channels.fetch(process.env.WCA_COMP);
+        const forum = await bot.channels.fetch(process.env.WCA_COMP);
 
-        forEach(({ embed, reactions }) => {
-          chan
+        const threads = await forum.threads.fetch();
+        for (const { embed, reactions, country } of formattedCompetitions) {
+          const chan = threads.threads.find((x) => x.name === country);
+
+          await chan
             .send({ embeds: [embed] })
-            .then((mess) => forEach((emoji) => mess.react(emoji), reactions));
-        }, formattedCompetitions);
+            .then((mess) =>
+              Promise.all(map((emoji) => mess.react(emoji), reactions))
+            );
+        }
       },
       start: false,
       timeZone: "Europe/Paris",
