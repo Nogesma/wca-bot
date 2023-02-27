@@ -148,10 +148,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.11.18":
-  version: 18.11.18
-  resolution: "@types/node@npm:18.11.18"
-  checksum: 03f17f9480f8d775c8a72da5ea7e9383db5f6d85aa5fefde90dd953a1449bd5e4ffde376f139da4f3744b4c83942166d2a7603969a6f8ea826edfb16e6e3b49d
+"@types/node@npm:^18.14.2":
+  version: 18.14.2
+  resolution: "@types/node@npm:18.14.2"
+  checksum: 53c07e721f6ae33de71306f6a0b75dae6066a4f55bd5484c93bd59ff25f0c5f004ceafeef509a4d0cb9e24a247efc34d50489bcc1b05a53ecc68e2fc088e65cb
   languageName: node
   linkType: hard
 
@@ -1814,7 +1814,7 @@ fsevents@~2.3.2:
   version: 0.0.0-use.local
   resolution: "wca-bot@workspace:."
   dependencies:
-    "@types/node": ^18.11.18
+    "@types/node": ^18.14.2
     chalk: ^5.2.0
     country-code-emoji: ^2.3.0
     cron: ^2.2.0
