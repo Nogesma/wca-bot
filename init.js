@@ -5,7 +5,10 @@ import {
   updateWcacomp,
 } from "./app/controllers/db-controller.js";
 import { getRecentRecords } from "./app/helpers/wca-live-helpers.js";
-import { getUpcomingCompetitions } from "./app/helpers/wca-comp-helpers.js";
+import {
+  getAllThreads,
+  getUpcomingCompetitions,
+} from "./app/helpers/wca-comp-helpers.js";
 import { map } from "ramda";
 import { Client, GatewayIntentBits } from "discord.js";
 import logger from "./app/tools/logger.js";
@@ -29,13 +32,11 @@ const initDir = async () => {
 };
 const initForum = async (upcomingCompetitions) => {
   const forum = await bot.channels.fetch(process.env.WCA_COMP);
-  const threads = await forum.threads.fetch({
-    active: true,
-    archived: { fetchAll: true },
-  });
+  const threads = await getAllThreads(forum);
+
   for (const country of COUNTRIES) {
     const name = `${countryCodeEmoji(country)} ${getCountryName.of(country)}`;
-    const chan = threads.threads.find((x) => x.name === name);
+    const chan = threads.find((x) => x.name === name);
 
     if (chan) continue;
 

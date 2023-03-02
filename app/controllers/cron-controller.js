@@ -7,6 +7,7 @@ import {
   formatCompetition,
   getNewCompetitions,
 } from "./wca-comp-controller.js";
+import { getAllThreads } from "../helpers/wca-comp-helpers.js";
 
 const cronList_ = [];
 
@@ -38,13 +39,10 @@ const startCron = (bot) => {
         const formattedCompetitions = formatCompetition(newCompetitions);
 
         const forum = await bot.channels.fetch(process.env.WCA_COMP);
+        const threads = await getAllThreads(forum);
 
-        const threads = await forum.threads.fetch({
-          active: true,
-          archived: { fetchAll: true },
-        });
         for (const { embed, reactions, country } of formattedCompetitions) {
-          const chan = threads.threads.find((x) => x.name === country);
+          const chan = threads.find((x) => x.name === country);
 
           await chan
             .send({ embeds: [embed] })

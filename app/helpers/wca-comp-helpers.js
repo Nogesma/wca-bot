@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import fetch from "node-fetch";
 import { flatten, map, omit, range } from "ramda";
+import { Collection } from "discord.js";
 
 const getUpcomingCompetitions = async () => {
   const url = `https://www.worldcubeassociation.org/api/v0/competitions?sort=start_date&start=${dayjs().format(
@@ -47,4 +48,11 @@ const prettifyTwoDates = (startDateStr, endDateStr) => {
   return `${startDate.format("DD/MM/YYYY")} au ${formattedDate}`;
 };
 
-export { getUpcomingCompetitions, prettifyTwoDates };
+const getAllThreads = async (forum) => {
+  const active = await forum.threads.fetchActive();
+  const archived = await forum.threads.fetchArchived();
+
+  return new Collection([...active.threads, ...archived.threads]);
+};
+
+export { getUpcomingCompetitions, prettifyTwoDates, getAllThreads };
