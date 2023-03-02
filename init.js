@@ -29,7 +29,10 @@ const initDir = async () => {
 };
 const initForum = async (upcomingCompetitions) => {
   const forum = await bot.channels.fetch(process.env.WCA_COMP);
-  const threads = await forum.threads.fetch();
+  const threads = await forum.threads.fetch({
+    active: true,
+    archived: { fetchAll: true },
+  });
   for (const country of COUNTRIES) {
     const name = `${countryCodeEmoji(country)} ${getCountryName.of(country)}`;
     const chan = threads.threads.find((x) => x.name === name);

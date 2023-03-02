@@ -148,10 +148,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.11.18":
-  version: 18.11.18
-  resolution: "@types/node@npm:18.11.18"
-  checksum: 03f17f9480f8d775c8a72da5ea7e9383db5f6d85aa5fefde90dd953a1449bd5e4ffde376f139da4f3744b4c83942166d2a7603969a6f8ea826edfb16e6e3b49d
+"@types/node@npm:^18.14.4":
+  version: 18.14.4
+  resolution: "@types/node@npm:18.14.4"
+  checksum: 3f2f625777747b9f87e793eea5a8bbf1ac2c828846bda5811d07a457d55cfe6762239779759de61e7b7e917632b9ceee3f7ffd2a024117e7ec364dc1b4eb8d55
   languageName: node
   linkType: hard
 
@@ -767,9 +767,9 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"graphql-request@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "graphql-request@npm:5.1.0"
+"graphql-request@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "graphql-request@npm:5.2.0"
   dependencies:
     "@graphql-typed-document-node/core": ^3.1.1
     cross-fetch: ^3.1.5
@@ -777,7 +777,7 @@ fsevents@~2.3.2:
     form-data: ^3.0.0
   peerDependencies:
     graphql: 14 - 16
-  checksum: 8b65d5c1b0cad8996a843b52305b2712ffbf842c700487d4cee1ed719f22baacaacfddafb65572bcddd67d57fd1d2d389dee2430ffba4b34c3ab542d079446c7
+  checksum: a8aa37816378898e6fc8c4db04a1c114c98f98d90718cf1680bd96b22724bd43b1210619f9b0d328b5c1acb4f7b76d2227a2537cd5ab059bb54cf0debecb33bf
   languageName: node
   linkType: hard
 
@@ -1365,12 +1365,12 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.8.3":
-  version: 2.8.3
-  resolution: "prettier@npm:2.8.3"
+"prettier@npm:^2.8.4":
+  version: 2.8.4
+  resolution: "prettier@npm:2.8.4"
   bin:
     prettier: bin-prettier.js
-  checksum: 92f2ceb522d454370e02082aa74ad27388672f7cee8975028b59517c069fe643bdc73e322675c8faf2ff173d7a626d1a6389f26b474000308e793aa25fff46e5
+  checksum: c173064bf3df57b6d93d19aa98753b9b9dd7657212e33b41ada8e2e9f9884066bb9ca0b4005b89b3ab137efffdf8fbe0b462785aba20364798ff4303aadda57e
   languageName: node
   linkType: hard
 
@@ -1814,7 +1814,7 @@ fsevents@~2.3.2:
   version: 0.0.0-use.local
   resolution: "wca-bot@workspace:."
   dependencies:
-    "@types/node": ^18.11.18
+    "@types/node": ^18.14.4
     chalk: ^5.2.0
     country-code-emoji: ^2.3.0
     cron: ^2.2.0
@@ -1822,10 +1822,10 @@ fsevents@~2.3.2:
     discord.js: ^14.7.1
     dotenv: ^16.0.3
     graphql: ^16.6.0
-    graphql-request: ^5.1.0
+    graphql-request: ^5.2.0
     node-fetch: ^3.3.0
     nodemon: ^2.0.20
-    prettier: ^2.8.3
+    prettier: ^2.8.4
     ramda: ^0.28.0
     winston: ^3.8.2
   languageName: unknown

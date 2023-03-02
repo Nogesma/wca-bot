@@ -39,7 +39,10 @@ const startCron = (bot) => {
 
         const forum = await bot.channels.fetch(process.env.WCA_COMP);
 
-        const threads = await forum.threads.fetch();
+        const threads = await forum.threads.fetch({
+          active: true,
+          archived: { fetchAll: true },
+        });
         for (const { embed, reactions, country } of formattedCompetitions) {
           const chan = threads.threads.find((x) => x.name === country);
 
