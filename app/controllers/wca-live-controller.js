@@ -36,25 +36,25 @@ const formatRecord = (records) =>
             eventToEmoji[r.result.round.competitionEvent.event.id]
           } ${getResultType(
             r.type,
-            r.result.round.competitionEvent.event.id
+            r.result.round.competitionEvent.event.id,
           )} of ${formatAttemptResult({
             attemptResult: r.attemptResult,
             eventId: r.result.round.competitionEvent.event.id,
-          })}`
+          })}`,
         )
         .setURL(
-          `https://live.worldcubeassociation.org/competitions/${r.result.round.competitionEvent.competition.id}/rounds/${r.result.round.id}`
+          `https://live.worldcubeassociation.org/competitions/${r.result.round.competitionEvent.competition.id}/rounds/${r.result.round.id}`,
         )
         .setDescription(
           `${r.result.person.name} from ${
             r.result.person.country.name
-          } ${countryCodeEmoji(r.result.person.country.iso2)}`
+          } ${countryCodeEmoji(r.result.person.country.iso2)}`,
         )
         .setColor(getColorOfTag[r.tag])
         .setThumbnail(
-          `https://raw.githubusercontent.com/Nogesma/wca-bot/main/img/${r.tag}.png`
+          `https://raw.githubusercontent.com/Nogesma/wca-bot/main/img/${r.tag}.png`,
         ),
-    records
+    records,
   );
 
 export { getNewRecords, formatRecord };

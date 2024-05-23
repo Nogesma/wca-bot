@@ -23,7 +23,7 @@ const decodeMbldAttemptResult = ifElse(
       attempted: solved + missed,
       centiseconds: (Math.floor(value / 100) % 1e5) * 100,
     };
-  }
+  },
 );
 
 export { centisecondsToTime, decodeMbldAttemptResult };

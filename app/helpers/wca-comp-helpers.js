@@ -5,29 +5,29 @@ import { Collection } from "discord.js";
 
 const getUpcomingCompetitions = async () => {
   const url = `https://www.worldcubeassociation.org/api/v0/competitions?sort=start_date&start=${dayjs().format(
-    "YYYY-MM-DD"
+    "YYYY-MM-DD",
   )}`;
 
   const { response: firstResponse, numberOfPages } = await fetch(url).then(
     async (res) => {
       const numberOfPages = Math.ceil(
-        res.headers.get("Total") / res.headers.get("Per-page")
+        res.headers.get("Total") / res.headers.get("Per-page"),
       );
       const response = await res.json();
       return { response, numberOfPages };
-    }
+    },
   );
 
   const responseArray = await Promise.all(
     map(
       (n) => fetch(url + "&page=" + n).then((res) => res.json()),
-      range(2, numberOfPages + 1)
-    )
+      range(2, numberOfPages + 1),
+    ),
   );
 
   return map(
     omit(["delegates", "trainee_delegates", "organizers"]),
-    flatten([firstResponse, responseArray])
+    flatten([firstResponse, responseArray]),
   );
 };
 

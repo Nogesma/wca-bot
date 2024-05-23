@@ -18,7 +18,7 @@ import {
 } from "../tools/calculator.js";
 
 const client = new GraphQLClient(
-  "https://live.worldcubeassociation.org/api/graphql"
+  "https://live.worldcubeassociation.org/api/graphql",
 );
 
 const query = gql`
@@ -73,7 +73,7 @@ const getResultType = (t, e) =>
    while averages are stored with 2 decimal places (e.g. 2533 for an average of 25.33 moves). */
 const formatFmAttemptResult = pipe(
   prop("attemptResult"),
-  ifElse(lt(1000), centisecondsToTime, toString)
+  ifElse(lt(1000), centisecondsToTime, toString),
 );
 
 const formatMbldAttemptResult = pipe(
@@ -82,8 +82,8 @@ const formatMbldAttemptResult = pipe(
   ({ solved, attempted, centiseconds }) =>
     `${solved}/${attempted} ${centisecondsToTime(centiseconds).replace(
       /\.00$/,
-      ""
-    )}`
+      "",
+    )}`,
 );
 
 const formatAttemptResult = cond([

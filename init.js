@@ -53,12 +53,12 @@ const initForum = async (upcomingCompetitions) => {
           thread
             .send({ embeds: [embed] })
             .then((mess) =>
-              Promise.all(map((emoji) => mess.react(emoji), reactions))
+              Promise.all(map((emoji) => mess.react(emoji), reactions)),
             ),
         formatCompetition(
-          upcomingCompetitions.filter((x) => x.country_iso2 === country)
-        )
-      )
+          upcomingCompetitions.filter((x) => x.country_iso2 === country),
+        ),
+      ),
     );
   }
 };

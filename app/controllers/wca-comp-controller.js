@@ -30,7 +30,7 @@ const getNewCompetitions = async () => {
 
   return filter(
     propSatisfies(includes(__, COUNTRIES), "country_iso2"),
-    newComps
+    newComps,
   );
 };
 
@@ -41,7 +41,7 @@ const formatCompetition = map((comp) =>
           .setTitle(`**${comp.name}**`)
           .setURL(comp.url)
           .setThumbnail(
-            "https://raw.githubusercontent.com/thewca/worldcubeassociation.org/e974e9020e8c8a1e562c57695b96b312efb8eafa/WcaOnRails/public/files/WCAlogo_50x50.png"
+            "https://raw.githubusercontent.com/thewca/worldcubeassociation.org/e974e9020e8c8a1e562c57695b96b312efb8eafa/WcaOnRails/public/files/WCAlogo_50x50.png",
           )
           .setColor("#00FF00")
           .addFields([
@@ -49,7 +49,7 @@ const formatCompetition = map((comp) =>
             {
               name: "Pays",
               value: `__**${getCountryName.of(
-                comp.country_iso2
+                comp.country_iso2,
               )}**__ ${countryCodeEmoji(comp.country_iso2)}`,
               inline: true,
             },
@@ -70,17 +70,17 @@ const formatCompetition = map((comp) =>
               name: "Inscriptions",
               value: prettifyTwoDates(
                 comp.registration_open,
-                comp.registration_close
+                comp.registration_close,
               ),
               inline: true,
             },
           ]),
         reactions: prepend(
           "<:WCA:862620349376364554>",
-          map((id) => eventToEmoji[id], comp.event_ids)
+          map((id) => eventToEmoji[id], comp.event_ids),
         ),
         country: `${countryCodeEmoji(comp.country_iso2)} ${getCountryName.of(
-          comp.country_iso2
+          comp.country_iso2,
         )}`,
       }
     : {
@@ -88,15 +88,15 @@ const formatCompetition = map((comp) =>
           .setTitle(`**${comp.name}**`)
           .setURL(comp.url)
           .setThumbnail(
-            "https://raw.githubusercontent.com/thewca/worldcubeassociation.org/e974e9020e8c8a1e562c57695b96b312efb8eafa/WcaOnRails/public/files/WCAlogo_50x50.png"
+            "https://raw.githubusercontent.com/thewca/worldcubeassociation.org/e974e9020e8c8a1e562c57695b96b312efb8eafa/WcaOnRails/public/files/WCAlogo_50x50.png",
           )
           .setColor("#FF0000")
           .setDescription("La compétition a été annulée."),
         reactions: ["<:RIP:421349840467787776>"],
         country: `${countryCodeEmoji(comp.country_iso2)} ${getCountryName.of(
-          comp.country_iso2
+          comp.country_iso2,
         )}`,
-      }
+      },
 );
 
 export { getNewCompetitions, formatCompetition };

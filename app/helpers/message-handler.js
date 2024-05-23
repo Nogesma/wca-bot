@@ -9,7 +9,7 @@ const sendNewCompMessage = async ({ channel, args }) => {
   const competitions = await getWcacomp();
 
   const comp = filter(pipe(prop("id"), equals(compID)))(
-    competitions.competitions
+    competitions.competitions,
   );
 
   const formattedCompetition = formatCompetition(comp);
@@ -18,7 +18,7 @@ const sendNewCompMessage = async ({ channel, args }) => {
     const [{ embed, reactions }] = formattedCompetition;
 
     const wcaChan = await channel.guild.channels.cache.get(
-      process.env.WCA_COMP
+      process.env.WCA_COMP,
     );
 
     wcaChan

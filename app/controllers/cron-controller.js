@@ -23,12 +23,12 @@ const startCron = (bot) => {
         const chan = await bot.channels.fetch(process.env.WCA_LIVE);
 
         await Promise.all(
-          map((message) => chan.send({ embeds: [message] }), formattedRecords)
+          map((message) => chan.send({ embeds: [message] }), formattedRecords),
         );
       },
       start: false,
       timeZone: "Europe/Paris",
-    })
+    }),
   );
 
   cronList_.push(
@@ -47,13 +47,13 @@ const startCron = (bot) => {
           await chan
             .send({ embeds: [embed] })
             .then((mess) =>
-              Promise.all(map((emoji) => mess.react(emoji), reactions))
+              Promise.all(map((emoji) => mess.react(emoji), reactions)),
             );
         }
       },
       start: false,
       timeZone: "Europe/Paris",
-    })
+    }),
   );
 
   cronList_.forEach((c) => c.start());

@@ -5,7 +5,7 @@ import { sendNewCompMessage } from "../helpers/message-handler.js";
 const messageIsCommand = (mess) =>
   mess.member.roles.cache.some(
     (role) =>
-      role.permissions.has("ADMINISTRATOR") || role.id === process.env.MOD_ID
+      role.permissions.has("ADMINISTRATOR") || role.id === process.env.MOD_ID,
   );
 
 const commandChoose = cond([
