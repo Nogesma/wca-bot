@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import fetch from "node-fetch";
-import { flatten, map, omit, range } from "ramda";
+import { flatten, map, pick, range } from "ramda";
 import { Collection } from "discord.js";
 
 const getUpcomingCompetitions = async () => {
@@ -26,7 +26,23 @@ const getUpcomingCompetitions = async () => {
   );
 
   return map(
-    omit(["delegates", "trainee_delegates", "organizers"]),
+    pick([
+      "id",
+      "name",
+      "registration_open",
+      "registration_close",
+      "start_date",
+      "end_date",
+      "competitor_limit",
+      "cancelled_at",
+      "url",
+      "city",
+      "venue_address",
+      "latitude_degrees",
+      "longitude_degrees",
+      "country_iso2",
+      "event_ids",
+    ]),
     flatten([firstResponse, responseArray]),
   );
 };
