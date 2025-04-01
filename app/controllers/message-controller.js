@@ -1,11 +1,13 @@
 import { cond, pipe, prop, propEq, split, when } from "ramda";
 
 import { sendNewCompMessage } from "../helpers/message-handler.js";
+import { PermissionsBitField } from "discord.js";
 
 const messageIsCommand = (mess) =>
   mess.member.roles.cache.some(
     (role) =>
-      role.permissions.has("ADMINISTRATOR") || role.id === process.env.MOD_ID,
+      role.permissions.has(PermissionsBitField.Flags.Administrator) ||
+      role.id === process.env.MOD_ID,
   );
 
 const commandChoose = cond([
