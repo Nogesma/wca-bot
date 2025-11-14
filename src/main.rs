@@ -1,21 +1,19 @@
-use country_emoji;
 use dotenv::dotenv;
 use log::info;
 use serenity::{
     Client,
-    all::{
-        ChannelId, CreateForumPost, CreateMessage, EventHandler, GatewayIntents, GetMessages,
-        Guild, Ready,
-    },
+    all::{ChannelId, CreateForumPost, CreateMessage, EventHandler, GatewayIntents, Ready},
     async_trait,
-    http::Http,
     prelude::*,
 };
 use std::{env, fs::create_dir, io, path::PathBuf};
 
+mod competitions;
 mod config;
 
 use config::COUNTRIES;
+
+use crate::competitions::COMPS;
 
 const DATA_DIR: &str = "./data";
 
@@ -50,11 +48,8 @@ fn init_dir() -> Result<(), io::Error> {
         info!("Updated WCA live data.");
     }
 
-    let wcacomps = PathBuf::from_iter([DATA_DIR, "wcacomps.json"]);
-    if !wcacomps.exists() {
-        let upcoming_competitions = get_upcoming_competitions()?;
-        update_wca_comps(upcoming_competitions)?;
-        info!("Updated WCA comps data.");
+    {
+        let _ = COMPS;
     }
 
     Ok(())
