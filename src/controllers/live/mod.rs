@@ -1,13 +1,13 @@
-use super::{Controller, ControllerInner, Result};
+use super::{Controller, ControllerInner, EmbedMessage};
 use crate::{
     config::{COUNTRIES, EVENT_EMOJI, TAG_COLOR},
-    init::InitError,
+    init::{InitError, Result},
 };
 use cynic::{QueryBuilder, http::ReqwestExt};
 use gql::{Record, RootQueryType};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
-use serenity::all::{Color, CreateEmbed};
+use serenity::all::{Color, CreateEmbed, GuildChannel};
 use std::{collections::HashSet, ops::Deref, sync::OnceLock};
 use tokio::sync::Mutex;
 
@@ -16,7 +16,7 @@ mod gql;
 #[derive(Serialize, Deserialize)]
 pub struct Live(HashSet<Record>);
 
-pub static LIVE: OnceLock<Mutex<Live>> = OnceLock::new();
+pub static LIVE: OnceLock<Mutex<Controller<Live>>> = OnceLock::new();
 
 impl Deref for Live {
     type Target = HashSet<Record>;
@@ -32,44 +32,52 @@ impl ControllerInner for Live {
 
     type Inner = Record;
 
-    fn format(self) -> impl Iterator<Item = CreateEmbed> {
-        self.0.into_iter().map(|record| {
-            let event_id = record.result.round.competition_event.event.id.inner();
-            CreateEmbed::new()
-                .title(format!(
-                    "{} {} {} of {}",
-                    record.result.round.competition_event.event.name,
-                    EVENT_EMOJI.get(event_id).unwrap(),
-                    get_result_type(&record.t, event_id),
-                    format_attempt_result(record.attempt_result, event_id)
-                ))
-                .url(format!(
-                    "https://live.worldcubeassociation.org/competitions/{}/rounds/{}",
-                    record.result.round.competition_event.competition.id.inner(),
-                    record.result.round.id.inner()
-                ))
-                .description(
-                    // TODO: Country iso2 will fail, need to import crate
-                    format!(
-                        "{} from {} {}",
-                        record.result.person.name.unwrap_or_default(),
-                        record.result.person.country.name,
-                        COUNTRIES
-                            .get(record.result.person.country.iso2.as_str())
-                            .unwrap_or(&("", ""))
-                            .0
-                    ),
-                )
-                .colour(
-                    *TAG_COLOR
-                        .get(record.tag.as_str())
-                        .unwrap_or(&Color::from(0xFFFFFF)),
-                )
-                .thumbnail(format!(
-                    "https://raw.githubusercontent.com/Nogesma/wca-bot/main/img/{}.png",
-                    record.tag
-                ))
-        })
+    fn format(self, channels: &'_ [GuildChannel]) -> Vec<EmbedMessage<'_>> {
+        let channel = channels.first().unwrap();
+        self.0
+            .into_iter()
+            .map(move |record| {
+                let event_id = record.result.round.competition_event.event.id.inner();
+                EmbedMessage {
+                    message: CreateEmbed::new()
+                        .title(format!(
+                            "{} {} {} of {}",
+                            record.result.round.competition_event.event.name,
+                            EVENT_EMOJI.get(event_id).unwrap(),
+                            get_result_type(&record.t, event_id),
+                            format_attempt_result(record.attempt_result, event_id)
+                        ))
+                        .url(format!(
+                            "https://live.worldcubeassociation.org/competitions/{}/rounds/{}",
+                            record.result.round.competition_event.competition.id.inner(),
+                            record.result.round.id.inner()
+                        ))
+                        .description(
+                            // TODO: Country iso2 will fail, need to import crate
+                            format!(
+                                "{} from {} {}",
+                                record.result.person.name.unwrap_or_default(),
+                                record.result.person.country.name,
+                                COUNTRIES
+                                    .get(record.result.person.country.iso2.as_str())
+                                    .unwrap_or(&("", ""))
+                                    .0
+                            ),
+                        )
+                        .colour(
+                            *TAG_COLOR
+                                .get(record.tag.as_str())
+                                .unwrap_or(&Color::from(0xFFFFFF)),
+                        )
+                        .thumbnail(format!(
+                            "https://raw.githubusercontent.com/Nogesma/wca-bot/main/img/{}.png",
+                            record.tag
+                        )),
+                    reactions: vec![],
+                    channel,
+                }
+            })
+            .collect()
     }
 
     async fn download() -> Result<Self> {
@@ -90,8 +98,6 @@ impl ControllerInner for Live {
         Self(value)
     }
 }
-
-impl Controller for Live {}
 
 fn get_result_type<'a>(t: &'a str, event: &str) -> &'a str {
     match t {

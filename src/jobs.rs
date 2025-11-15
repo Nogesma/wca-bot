@@ -1,4 +1,4 @@
-use crate::controllers::{Controller, competitions::COMPS, live::LIVE};
+use crate::controllers::{competitions::COMPS, live::LIVE};
 use tokio_cron_scheduler::{Job, JobSchedulerError};
 
 pub fn jobs() -> Result<impl Iterator<Item = Job>, JobSchedulerError> {
