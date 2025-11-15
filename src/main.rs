@@ -1,3 +1,12 @@
+use crate::{
+    config::COUNTRIES,
+    controllers::{
+        Controller,
+        competitions::{COMPS, Competitions},
+        live::{LIVE, Live},
+    },
+    jobs::jobs,
+};
 use dotenv::dotenv;
 use log::info;
 use serenity::{
@@ -7,33 +16,17 @@ use serenity::{
     prelude::*,
 };
 use std::{env, fs::create_dir, io, path::PathBuf};
+use tokio::sync::Mutex;
+use tokio_cron_scheduler::JobScheduler;
 
-mod competitions;
 mod config;
-
-use config::COUNTRIES;
-
-use crate::competitions::COMPS;
+mod controllers;
+mod init;
+mod jobs;
 
 const DATA_DIR: &str = "./data";
 
-fn get_recent_records() -> Result<(), io::Error> {
-    Ok(())
-}
-fn update_wca_live(_: ()) -> Result<(), io::Error> {
-    Ok(())
-}
-fn get_upcoming_competitions() -> Result<(), io::Error> {
-    Ok(())
-}
-fn update_wca_comps(_: ()) -> Result<(), io::Error> {
-    Ok(())
-}
-fn get_competitions() -> Result<(), io::Error> {
-    Ok(())
-}
-
-fn init_dir() -> Result<(), io::Error> {
+async fn init_dir() -> Result<(), io::Error> {
     let path = PathBuf::from(DATA_DIR);
 
     if !path.exists() {
@@ -41,16 +34,13 @@ fn init_dir() -> Result<(), io::Error> {
         info!("Created data directory.");
     }
 
-    let wcalive = PathBuf::from_iter([DATA_DIR, "wcalive.json"]);
-    if !wcalive.exists() {
-        let records = get_recent_records()?;
-        update_wca_live(records)?;
-        info!("Updated WCA live data.");
-    }
+    let live = Live::init().await.expect("Unable to init wcalive");
+    LIVE.get_or_init(|| Mutex::new(live));
 
-    {
-        let _ = COMPS;
-    }
+    let comps = Competitions::init()
+        .await
+        .expect("Unable to init competitions");
+    COMPS.get_or_init(|| Mutex::new(comps));
 
     Ok(())
 }
@@ -61,7 +51,7 @@ struct Handler;
 impl EventHandler for Handler {
     async fn ready(&self, ctx: Context, ready: Ready) {
         info!("Bot ready!");
-        init_dir().expect("Unable to init dir");
+        init_dir().await.expect("Unable to init dir");
 
         // Expect the bot to only be in one guild
         let guild_id = ready.guilds.first().unwrap().id;
@@ -127,9 +117,18 @@ impl EventHandler for Handler {
 #[tokio::main]
 async fn main() {
     dotenv().ok();
+
     env_logger::init();
 
-    let token = env::var("TOKEN").expect("Missing discord token.");
+    let sched = JobScheduler::new()
+        .await
+        .expect("Unable to create job scheduler");
+
+    for j in jobs().expect("Unable to create jobs") {
+        sched.add(j).await.expect("Unable to add job to scheduler");
+    }
+
+    let token = env::var("TOKEN").expect("Missing discord token");
 
     let intents = GatewayIntents::GUILDS
         | GatewayIntents::GUILD_MESSAGES

@@ -1,0 +1,496 @@
+schema {
+  query: RootQueryType
+  mutation: RootMutationType
+  subscription: RootSubscriptionType
+}
+"""
+An activity taking place in a specified timeframe in a single room.
+"""
+type Activity {
+  activityCode: String!
+  assignments: [Assignment!]!
+  childActivities: [Activity!]!
+  endTime: DateTime!
+  id: ID!
+  name: String!
+  """
+  The corresponding round for round activities, otherwise null.
+  """
+  round: Round
+  startTime: DateTime!
+  wcifId: Int!
+}
+
+input AddPersonToRoundInput {
+  personId: ID!
+  roundId: ID!
+}
+
+type AddPersonToRoundPayload {
+  round: Round
+}
+
+"""
+A structure describing which people can be added to the given round.
+"""
+type AdvancementCandidates {
+  """
+  People who qualify to this round, but are not in it.
+  """
+  qualifying: [Person!]!
+  """
+  People who would be removed from this round if one of the other qualifying people was added. If this list is not empty, it means the qualifying people have quit before, and thus may supersede whoever replaced them.
+  """
+  revocable: [Person!]!
+}
+
+type AdvancementCondition {
+  level: Int!
+  type: String!
+}
+
+"""
+An object representing person's assignment to an activity.
+"""
+type Assignment {
+  activity: Activity!
+  assignmentCode: String!
+  id: ID!
+  person: Person!
+  stationNumber: Int
+}
+
+"""
+A single attempt done by a competitor.
+"""
+type Attempt {
+  reconstruction: String
+  result: Int!
+}
+
+input AttemptInput {
+  reconstruction: String
+  result: Int!
+}
+
+"""
+An avatar.
+"""
+type Avatar {
+  thumbUrl: String
+  url: String
+}
+
+input ClearRoundInput {
+  id: ID!
+}
+
+type ClearRoundPayload {
+  round: Round
+}
+
+"""
+A competition, imported from the WCA website.
+"""
+type Competition {
+  access: CompetitionAccess!
+  competitionEvents: [CompetitionEvent!]!
+  competitionRecords: [Record!]!
+  competitorLimit: Int
+  competitors: [Person!]!
+  endDate: Date!
+  endTime: DateTime!
+  id: ID!
+  name: String!
+  podiums: [Podium!]!
+  shortName: String!
+  staffMembers: [StaffMember!]!
+  startDate: Date!
+  startTime: DateTime!
+  synchronizedAt: DateTime!
+  venues: [Venue!]!
+  wcaId: String!
+}
+
+"""
+A virtual object representing current user access properties.
+"""
+type CompetitionAccess {
+  canManage: Boolean!
+  canScoretake: Boolean!
+}
+
+"""
+A small subset of competition information. Used to represent competitions fetched from the WCA API.
+"""
+type CompetitionBrief {
+  endDate: Date!
+  name: String!
+  shortName: String!
+  startDate: Date!
+  wcaId: String!
+}
+
+"""
+A competition event.
+"""
+type CompetitionEvent {
+  competition: Competition!
+  competitorLimit: Int
+  event: Event!
+  id: ID!
+  rounds: [Round!]!
+}
+
+"""
+A country.
+"""
+type Country {
+  continentName: String!
+  iso2: String!
+  name: String!
+}
+
+type Cutoff {
+  attemptResult: Int!
+  numberOfAttempts: Int!
+}
+
+"""
+The `Date` scalar type represents a date. The Date appears in a JSON
+response as an ISO8601 formatted string, without a time component.
+"""
+scalar Date
+
+"""
+The `DateTime` scalar type represents a date and time in the UTC
+timezone. The DateTime appears in a JSON response as an ISO8601 formatted
+string, including UTC timezone ("Z"). The parsed date and time string will
+be converted to UTC if there is an offset.
+"""
+scalar DateTime
+
+input DeleteScoretakingTokenInput {
+  id: ID!
+}
+
+type DeleteScoretakingTokenPayload {
+  scoretakingToken: ScoretakingToken
+}
+
+input EnterResultsInput {
+  id: ID!
+  results: [ResultAttemptsInput!]!
+}
+
+type EnterResultsPayload {
+  results: [Result]
+  round: Round
+}
+
+"""
+A WCA event.
+"""
+type Event {
+  id: ID!
+  name: String!
+  rank: Int!
+}
+
+type Format {
+  id: ID!
+  name: String!
+  numberOfAttempts: Int!
+  shortName: String!
+  sortBy: String!
+}
+
+type GenerateOneTimeCodePayload {
+  oneTimeCode: OneTimeCode
+}
+
+input GenerateScoretakingTokenInput {
+  competitionId: ID!
+}
+
+type GenerateScoretakingTokenPayload {
+  scoretakingToken: ScoretakingToken
+  token: String
+}
+
+input ImportCompetitionInput {
+  wcaId: String!
+}
+
+type ImportCompetitionPayload {
+  competition: Competition
+}
+
+type RootMutationType {
+  addPersonToRound(input: AddPersonToRoundInput!): AddPersonToRoundPayload!
+  clearRound(input: ClearRoundInput!): ClearRoundPayload!
+  deleteScoretakingToken(input: DeleteScoretakingTokenInput!): DeleteScoretakingTokenPayload!
+  enterResults(input: EnterResultsInput!): EnterResultsPayload!
+  generateOneTimeCode: GenerateOneTimeCodePayload!
+  generateScoretakingToken(input: GenerateScoretakingTokenInput!): GenerateScoretakingTokenPayload!
+  importCompetition(input: ImportCompetitionInput!): ImportCompetitionPayload!
+  openRound(input: OpenRoundInput!): OpenRoundPayload!
+  removeNoShowsFromRound(input: RemoveNoShowsFromRoundInput!): RemoveNoShowsFromRoundPayload!
+  removePersonFromRound(input: RemovePersonFromRoundInput!): RemovePersonFromRoundPayload!
+  synchronizeCompetition(input: SynchronizeCompetitionInput!): SynchronizeCompetitionPayload!
+  updateCompetitionAccess(input: UpdateCompetitionAccessInput!): UpdateCompetitionAccessPayload!
+}
+
+"""
+Official regional record from the WCA rankings.
+"""
+type OfficialRecord {
+  attemptResult: Int!
+  event: Event!
+  type: String!
+}
+
+"""
+A temporary code generated for quick sign in.
+"""
+type OneTimeCode {
+  code: String!
+  expiresAt: DateTime!
+  id: ID!
+  insertedAt: DateTime!
+}
+
+input OpenRoundInput {
+  id: ID!
+}
+
+type OpenRoundPayload {
+  round: Round
+}
+
+"""
+A person relevant to a competition.
+"""
+type Person {
+  assignments: [Assignment!]!
+  avatar: Avatar
+  competition: Competition!
+  country: Country!
+  id: ID!
+  name: String
+  """
+  A small number, unique within the given competition, useful for scoretaking. Note: may be null for people who don't actually compete.
+  """
+  registrantId: Int
+  results: [Result!]!
+  roles: [String!]!
+  wcaId: String
+  wcaUserId: Int!
+}
+
+"""
+An object representing a podium.
+"""
+type Podium {
+  """
+  Results on the podium.
+  """
+  results: [Result!]!
+  """
+  The corresponding final round.
+  """
+  round: Round!
+}
+
+type RootQueryType {
+  activeScoretakingTokens: [ScoretakingToken!]!
+  competition(id: ID!): Competition
+  competitions(filter: String, from: Date, limit: Int): [Competition!]!
+  currentUser: User
+  """
+  A list of competitions that the current user may import from the WCA website.
+  """
+  importableCompetitions: [CompetitionBrief!]!
+  officialWorldRecords: [OfficialRecord!]!
+  person(id: ID!): Person
+  recentRecords: [Record!]!
+  round(id: ID!): Round
+  users(filter: String): [User!]!
+}
+
+"""
+A virtual object representing a regional record entered within the platform.
+"""
+type Record {
+  attemptResult: Int!
+  id: ID!
+  result: Result!
+  tag: String!
+  type: String!
+}
+
+input RemoveNoShowsFromRoundInput {
+  personIds: [ID!]!
+  roundId: ID!
+}
+
+type RemoveNoShowsFromRoundPayload {
+  round: Round
+}
+
+input RemovePersonFromRoundInput {
+  personId: ID!
+  replace: Boolean!
+  roundId: ID!
+}
+
+type RemovePersonFromRoundPayload {
+  round: Round
+}
+
+"""
+A result. Represents person's participation in a single round.
+"""
+type Result {
+  advancing: Boolean!
+  advancingQuestionable: Boolean!
+  attempts: [Attempt!]!
+  average: Int
+  averageRecordTag: String
+  best: Int
+  enteredAt: DateTime
+  enteredBy: User
+  id: ID!
+  person: Person!
+  ranking: Int
+  round: Round!
+  singleRecordTag: String
+}
+
+input ResultAttemptsInput {
+  attempts: [AttemptInput!]!
+  enteredAt: DateTime
+  id: ID!
+}
+
+"""
+A venue room. May represent a physical room or just a logical one (like a stage).
+"""
+type Room {
+  activities: [Activity!]!
+  color: String!
+  id: ID!
+  name: String!
+  wcifId: Int!
+}
+
+"""
+A round.
+"""
+type Round {
+  active: Boolean!
+  """
+  Describes qualifying people who could be manually added to this round.
+  """
+  advancementCandidates: AdvancementCandidates!
+  advancementCondition: AdvancementCondition
+  competitionEvent: CompetitionEvent!
+  cutoff: Cutoff
+  finished: Boolean!
+  format: Format!
+  id: ID!
+  label: String
+  name: String!
+  """
+  People who would qualify to this round, if one person quit.
+  """
+  nextQualifying: [Person!]!
+  numEnteredResults: Int
+  numResults: Int!
+  number: Int!
+  open: Boolean!
+  """
+  Results ordered by ranking and person name.
+  """
+  results: [Result!]!
+  timeLimit: TimeLimit
+}
+
+"""
+A competition-scoped token for scoretaking API calls from external systems.
+"""
+type ScoretakingToken {
+  competition: Competition!
+  id: ID!
+  insertedAt: DateTime!
+}
+
+"""
+A virtual object representing a user being a part of competition staff.
+"""
+type StaffMember {
+  competition: Competition!
+  enteredResultsCount: Int!
+  id: ID!
+  roles: [String!]!
+  user: User!
+}
+
+input StaffMemberInput {
+  id: ID
+  roles: [String!]!
+  userId: ID!
+}
+
+type RootSubscriptionType {
+  roundUpdated(id: ID!): Round!
+}
+
+input SynchronizeCompetitionInput {
+  id: ID!
+}
+
+type SynchronizeCompetitionPayload {
+  competition: Competition
+}
+
+type TimeLimit {
+  centiseconds: Int!
+  cumulativeRoundWcifIds: [String!]!
+}
+
+input UpdateCompetitionAccessInput {
+  id: ID!
+  staffMembers: [StaffMemberInput!]!
+}
+
+type UpdateCompetitionAccessPayload {
+  competition: Competition
+}
+
+"""
+A user of the application, imported from the WCA website during the OAuth procedure.
+"""
+type User {
+  avatar: Avatar
+  competitors: [Person!]!
+  id: ID!
+  name: String!
+  staffMembers: [StaffMember!]!
+  wcaId: String
+  wcaUserId: Int!
+}
+
+"""
+A competition venue. Represents a physical location.
+"""
+type Venue {
+  country: Country!
+  id: ID!
+  latitude: Float!
+  longitude: Float!
+  name: String!
+  rooms: [Room!]!
+  timezone: String!
+  wcifId: Int!
+}

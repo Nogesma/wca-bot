@@ -249,3 +249,8 @@ fabric.properties
 .pnp.*
 
 data/*
+
+
+# Added by cargo
+
+/target
