@@ -1,7 +1,7 @@
 use super::{Controller, ControllerInner, EmbedMessage};
 use crate::{
     config::{COUNTRIES, EVENT_EMOJI, TAG_COLOR},
-    init::{InitError, Result},
+    error::{InitError, Result},
 };
 use cynic::{QueryBuilder, http::ReqwestExt};
 use gql::{Record, RootQueryType};
@@ -80,11 +80,7 @@ impl ControllerInner for Live {
             .collect()
     }
 
-    async fn download() -> Result<Self> {
-        let client = Client::builder()
-            .user_agent("Nogesma/wca-bot/2.0")
-            .build()?;
-
+    async fn download(client: &Client) -> Result<Self> {
         let operation = RootQueryType::build(());
 
         let data = client.post(Self::URL).run_graphql(operation).await?;

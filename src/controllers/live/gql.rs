@@ -9,8 +9,10 @@ pub struct RootQueryType {
 }
 
 #[derive(cynic::QueryFragment, Serialize, Hash, Eq, PartialEq, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct Record {
     #[cynic(rename = "type")]
+    #[serde(rename = "type")]
     pub t: String,
     pub tag: String,
     pub attempt_result: i32,
@@ -37,6 +39,7 @@ pub struct Country {
 }
 
 #[derive(cynic::QueryFragment, Serialize, Hash, Eq, PartialEq, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct Round {
     pub id: cynic::Id,
     pub competition_event: CompetitionEvent,

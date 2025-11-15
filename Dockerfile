@@ -1,23 +1,17 @@
-FROM denoland/deno:2.5
-
-ENV NODE_ENV production
+FROM rust:latest AS builder
 
 WORKDIR /usr/src/app
 
-USER deno
+COPY wcalive.graphql .
+COPY src src/
+COPY build.rs Cargo.toml Cargo.lock ./
 
-COPY deps.ts .
+RUN cargo install --path .
 
-RUN deno install --entrypoint deps.ts
+RUN ls /usr/local/cargo/bin/wca-bot
 
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn .yarn/
-RUN yarn
+FROM debian:stable-slim
 
-COPY app app/
-COPY index.js .
-COPY init.js .
+COPY --from=builder /usr/local/cargo/bin/wca-bot /usr/local/bin/wca-bot
 
-#RUN deno run init.js
-
-CMD ["run", "--allow-env", "--allow-net", "index.js"]
+CMD ["sleep", "500"]

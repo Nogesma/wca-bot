@@ -1,26 +1,25 @@
 use crate::{
     config::COUNTRIES,
-    controllers::{Controller, competitions::COMPS, live::LIVE},
-    init::{InitError, Result},
+    controllers::{competitions::COMPS, live::LIVE, Controller},
+    error::{InitError, Result},
     jobs::jobs,
 };
 use dotenv::dotenv;
-use log::info;
+use log::{error, info};
 use serenity::{
-    Client,
     all::{
-        ChannelId, CreateForumPost, CreateMessage, EventHandler, GatewayIntents, GuildId, Ready,
+        ChannelId, Client, Context, CreateForumPost, CreateMessage, EventHandler, GatewayIntents,
+        GuildId, Ready,
     },
     async_trait,
-    prelude::*,
 };
-use std::{env, fs::create_dir, path::PathBuf, sync::Arc};
+use std::{env, fs::create_dir, path::PathBuf, process::exit, sync::Arc};
 use tokio::sync::Mutex;
 use tokio_cron_scheduler::JobScheduler;
 
 mod config;
 mod controllers;
-mod init;
+mod error;
 mod jobs;
 
 const DATA_DIR: &str = "./data";
@@ -89,18 +88,27 @@ async fn init(ctx: Context, guild: GuildId) -> Result<()> {
         }
     }
 
+    let client = reqwest::Client::builder()
+        .user_agent("Nogesma/wca-bot/2.0")
+        .build()?;
+
     {
         let live_channel = channels
             .get(&ChannelId::new(env::var("WCA_LIVE")?.parse()?))
             .ok_or(InitError::MissingChannel)?
             .clone();
 
-        let live = Controller::init(Arc::clone(&ctx.http), vec![live_channel]).await?;
+        info!("Init WCA Live");
+
+        let live =
+            Controller::init(client.clone(), Arc::clone(&ctx.http), vec![live_channel]).await?;
         LIVE.get_or_init(|| Mutex::new(live));
     }
 
     {
-        let comps = Controller::init(ctx.http, threads).await?;
+        info!("Init WCA Comps");
+
+        let comps = Controller::init(client, ctx.http, threads).await?;
 
         COMPS.get_or_init(|| Mutex::new(comps));
     }
@@ -116,9 +124,15 @@ impl EventHandler for Handler {
         info!("Bot ready!");
 
         // Expect the bot to only be in one guild
-        let guild_id = ready.guilds.first().unwrap().id;
+        let Some(guild) = ready.guilds.first() else {
+            error!("Bot is not in any guild");
+            exit(1)
+        };
 
-        init(ctx, guild_id).await.unwrap();
+        if let Err(e) = init(ctx, guild.id).await {
+            error!("Unable to run init: {e}");
+            exit(1)
+        }
     }
 }
 
@@ -149,7 +163,11 @@ async fn main() {
         .await
         .expect("Failed to create discord client.");
 
+    if let Err(why) = sched.start().await {
+        eprintln!("Scheduler error: {why}");
+    }
+
     if let Err(why) = client.start().await {
-        eprintln!("Client error: {why:?}");
+        eprintln!("Client error: {why}");
     }
 }
