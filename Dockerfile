@@ -14,4 +14,4 @@ FROM debian:stable-slim
 
 COPY --from=builder /usr/local/cargo/bin/wca-bot /usr/local/bin/wca-bot
 
-CMD ["sleep", "500"]
+CMD ["wca-bot"]
