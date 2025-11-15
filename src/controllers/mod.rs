@@ -1,7 +1,7 @@
 use crate::error::Result;
 use log::{debug, error, info};
 use reqwest::Client;
-use serde::{de::DeserializeOwned, Serialize};
+use serde::{Serialize, de::DeserializeOwned};
 use serenity::{
     all::{GuildChannel, ReactionType},
     builder::{CreateEmbed, CreateMessage},
@@ -147,26 +147,8 @@ pub trait ControllerInner: Sized + Serialize + DeserializeOwned + Send {
                 .add_embed(m.message)
                 .reactions(m.reactions);
 
-            // For some reason discord sometimes returns some 500 errors, retry while this happens
-            loop {
-                match m.channel.send_message(&http, mess.clone()).await {
-                    Ok(_) => break,
-                    Err(e) => {
-                        error!("Serenity error: {e:?}");
-
-                        match e {
-                            serenity::Error::Http(e) => {
-                                if let Some(code) = e.status_code()
-                                    && code.is_server_error()
-                                {
-                                    continue;
-                                }
-                                break;
-                            }
-                            _ => break,
-                        }
-                    }
-                }
+            if let Err(e) = m.channel.send_message(&http, mess.clone()).await {
+                error!("Serenity error: {e:?}");
             }
         }
     }

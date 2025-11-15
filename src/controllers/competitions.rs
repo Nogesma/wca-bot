@@ -119,7 +119,7 @@ impl ControllerInner for Competitions {
 
         let mut data = vec![res.text().await?];
         data.extend(
-            futures::stream::iter((1..pages).map(async |page| {
+            futures::stream::iter((1..=pages).map(async |page| {
                 client
                     .get(format!("{url}&page={page}"))
                     .send()
@@ -156,8 +156,8 @@ fn prettify_two_dates(start: &str, end: &str) -> String {
     let start = start.chars().take(10).collect::<String>();
     let end = end.chars().take(10).collect::<String>();
 
-    let start = chrono::NaiveDate::parse_from_str(&start, "%Y-%m-%d").unwrap();
-    let end = chrono::NaiveDate::parse_from_str(&end, "%Y-%m-%d").unwrap();
+    let start = chrono::NaiveDate::parse_from_str(&start, "%F").unwrap();
+    let end = chrono::NaiveDate::parse_from_str(&end, "%F").unwrap();
 
     let formatted_date = end.format("%d/%m/%Y");
 

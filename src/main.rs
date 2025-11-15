@@ -1,6 +1,6 @@
 use crate::{
     config::COUNTRIES,
-    controllers::{competitions::COMPS, live::LIVE, Controller},
+    controllers::{Controller, competitions::COMPS, live::LIVE},
     error::{InitError, Result},
     jobs::jobs,
 };
@@ -8,8 +8,8 @@ use dotenv::dotenv;
 use log::{error, info};
 use serenity::{
     all::{
-        ChannelId, Client, Context, CreateForumPost, CreateMessage, EventHandler, GatewayIntents,
-        GuildId, Ready,
+        ActivityData, ChannelId, Client, Context, CreateForumPost, CreateMessage, EventHandler,
+        GatewayIntents, GuildId, Ready,
     },
     async_trait,
 };
@@ -160,6 +160,7 @@ async fn main() {
 
     let mut client = Client::builder(token, intents)
         .event_handler(Handler)
+        .activity(ActivityData::custom("Cherche des nouveaux records"))
         .await
         .expect("Failed to create discord client.");
 
