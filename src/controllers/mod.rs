@@ -1,4 +1,6 @@
-use crate::init::{InitError, Result};
+use crate::error::Result;
+use log::{debug, error, info};
+use reqwest::Client;
 use serde::{de::DeserializeOwned, Serialize};
 use serenity::{
     all::{GuildChannel, ReactionType},
@@ -26,17 +28,20 @@ pub struct EmbedMessage<'a> {
 }
 
 pub struct Controller<T: ControllerInner> {
-    http: Arc<Http>,
+    http: Client,
+    cache: Arc<Http>,
     channels: Vec<GuildChannel>,
     data: T,
 }
 
 impl<T: ControllerInner> Controller<T> {
-    pub async fn init(http: Arc<Http>, channels: Vec<GuildChannel>) -> Result<Self> {
+    pub async fn init(http: Client, cache: Arc<Http>, channels: Vec<GuildChannel>) -> Result<Self> {
+        let data = T::init(&http).await?;
         Ok(Self {
             http,
+            cache,
             channels,
-            data: T::init().await?,
+            data,
         })
     }
 
@@ -44,7 +49,9 @@ impl<T: ControllerInner> Controller<T> {
     where
         T: Deref<Target = HashSet<T::Inner>>,
     {
-        self.data.update_and_send(&self.http, &self.channels).await
+        self.data
+            .update_and_send(&self.http, &self.cache, &self.channels)
+            .await
     }
 }
 
@@ -54,31 +61,41 @@ pub trait ControllerInner: Sized + Serialize + DeserializeOwned + Send {
 
     type Inner: Hash + Eq + Clone;
 
-    async fn init() -> Result<Self> {
+    async fn init(http: &Client) -> Result<Self> {
         if let Ok(s) = Self::read() {
+            info!("Read data from disk");
             return Ok(s);
         }
 
-        let s = Self::download().await?;
+        let s = Self::download(http).await?;
+
+        info!("Downloaded initial data from server");
 
         s.save()?;
+
+        info!("Saved data to file");
 
         Ok(s)
     }
 
     async fn update_and_send(
         &mut self,
-        http: impl CacheHttp,
+        http: &Client,
+        cache: impl CacheHttp,
         channels: &[GuildChannel],
     ) -> Result<()>
     where
         Self: Deref<Target = HashSet<Self::Inner>>,
     {
-        let diff = self.update().await?;
+        let diff = self.update(http).await?;
+
+        debug!("Successfully ran update");
 
         let messages = diff.format(channels);
 
-        Self::send(http, messages).await
+        Self::send(cache, messages).await;
+
+        Ok(())
     }
 
     fn read() -> Result<Self> {
@@ -89,11 +106,11 @@ pub trait ControllerInner: Sized + Serialize + DeserializeOwned + Send {
         Ok(serde_json::from_reader(reader)?)
     }
 
-    async fn update(&mut self) -> Result<Self>
+    async fn update(&mut self, http: &Client) -> Result<Self>
     where
         Self: Deref<Target = HashSet<Self::Inner>>,
     {
-        let mut new = Self::download().await?;
+        let mut new = Self::download(http).await?;
 
         let diff = Self::new(
             self.symmetric_difference(&*new)
@@ -111,31 +128,46 @@ pub trait ControllerInner: Sized + Serialize + DeserializeOwned + Send {
     fn save(&self) -> Result<()> {
         let path = PathBuf::from(Self::PATH);
 
-        let writer = BufWriter::new(File::open(path)?);
+        let writer = BufWriter::new(File::create(path)?);
 
         Ok(serde_json::to_writer(writer, self)?)
     }
 
     fn format(self, channels: &'_ [GuildChannel]) -> Vec<EmbedMessage<'_>>;
 
-    async fn download() -> Result<Self>;
+    async fn download(http: &Client) -> Result<Self>;
 
     fn new(value: HashSet<Self::Inner>) -> Self;
 
     // We cannot use an impl Iterator instead of a Vec here.
     // (see issue #100013 <https://github.com/rust-lang/rust/issues/100013> for more information)
-    async fn send(http: impl CacheHttp, messages: Vec<EmbedMessage<'_>>) -> Result<()> {
+    async fn send(http: impl CacheHttp, messages: Vec<EmbedMessage<'_>>) {
         for m in messages.into_iter() {
             let mess = CreateMessage::new()
                 .add_embed(m.message)
                 .reactions(m.reactions);
 
-            m.channel
-                .send_message(&http, mess)
-                .await
-                .map_err(|_| InitError::Serenity)?;
-        }
+            // For some reason discord sometimes returns some 500 errors, retry while this happens
+            loop {
+                match m.channel.send_message(&http, mess.clone()).await {
+                    Ok(_) => break,
+                    Err(e) => {
+                        error!("Serenity error: {e:?}");
 
-        Ok(())
+                        match e {
+                            serenity::Error::Http(e) => {
+                                if let Some(code) = e.status_code()
+                                    && code.is_server_error()
+                                {
+                                    continue;
+                                }
+                                break;
+                            }
+                            _ => break,
+                        }
+                    }
+                }
+            }
+        }
     }
 }
