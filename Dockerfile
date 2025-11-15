@@ -1,8 +1,14 @@
-FROM node:20-alpine
+FROM denoland/deno:2.5
 
 ENV NODE_ENV production
 
 WORKDIR /usr/src/app
+
+USER deno
+
+COPY deps.ts .
+
+RUN deno install --entrypoint deps.ts
 
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn .yarn/
@@ -12,4 +18,6 @@ COPY app app/
 COPY index.js .
 COPY init.js .
 
-CMD ["yarn", "run", "prod"]
+#RUN deno run init.js
+
+CMD ["run", "--allow-env", "--allow-net", "index.js"]
