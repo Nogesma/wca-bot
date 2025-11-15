@@ -1,36 +1,42 @@
-use super::{Controller, ControllerInner, Result};
-use crate::{config::COUNTRIES, init::InitError};
-use chrono::Local;
+use super::{Controller, ControllerInner, EmbedMessage};
+use crate::{
+    config::{COUNTRIES, EVENT_EMOJI},
+    init::{InitError, Result},
+};
+use chrono::{Datelike, Local};
 use futures::StreamExt;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
-use serenity::{all::CreateEmbed, model::Color};
+use serenity::{
+    all::{CreateEmbed, EmojiId, GuildChannel, ReactionType},
+    model::Color,
+};
 use std::{collections::HashSet, ops::Deref, sync::OnceLock};
 use tokio::sync::Mutex;
 
 #[derive(Serialize, Deserialize, Hash, Eq, PartialEq, Clone)]
 pub struct Competition {
-    pub id: String,
-    pub name: String,
-    pub registration_open: String,
-    pub registration_close: String,
-    pub start_date: String,
-    pub end_date: String,
-    pub competitor_limit: u16,
-    pub cancelled_at: Option<String>,
-    pub url: String,
-    pub city: String,
-    pub venue_address: String,
-    pub latitude_degrees: String,
-    pub longitude_degrees: String,
-    pub country_iso2: String,
-    pub events_ids: Vec<String>,
+    id: String,
+    name: String,
+    registration_open: String,
+    registration_close: String,
+    start_date: String,
+    end_date: String,
+    competitor_limit: u16,
+    cancelled_at: Option<String>,
+    url: String,
+    city: String,
+    venue_address: String,
+    latitude_degrees: String,
+    longitude_degrees: String,
+    country_iso2: String,
+    events_ids: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Competitions(HashSet<Competition>);
 
-pub static COMPS: OnceLock<Mutex<Competitions>> = OnceLock::new();
+pub static COMPS: OnceLock<Mutex<Controller<Competitions>>> = OnceLock::new();
 
 impl Deref for Competitions {
     type Target = HashSet<Competition>;
@@ -98,24 +104,66 @@ impl ControllerInner for Competitions {
         Self(value)
     }
 
-    fn format(self) -> impl Iterator<Item = CreateEmbed> {
+    fn format(self, channels: &'_ [GuildChannel]) -> Vec<EmbedMessage<'_>> {
         self.0.into_iter().map(|comp| {
-            CreateEmbed::new()
-                .title(format!("**{}**", comp.name))
-                .url(comp.url)
-                .thumbnail(
-                    "https://raw.githubusercontent.com/thewca/worldcubeassociation.org/e974e9020e8c8a1e562c57695b96b312efb8eafa/WcaOnRails/public/files/WCAlogo_50x50.png",
-                ).colour(Color::new(0x00FF00)).fields([
-                ("Ville", comp.city, true),
-                    ("Pays", format!("__**{}**__ {}", COUNTRIES.get(comp.country_iso2.as_str()).unwrap().1, COUNTRIES.get(comp.country_iso2.as_str()).unwrap().0), true),
-                ("Adresse", format!("[{}](https://duckduckgo.com/?ia=maps&iaxm=maps&q={},{})", comp.venue_address, comp.latitude_degrees, comp.longitude_degrees), false),
-                ("Competiteurs max", comp.competitor_limit.to_string(), false),
-                ("Date",  prettify_two_dates(comp.start_date, comp.end_date), true),
-                ("Inscriptions",  prettify_two_dates(comp.registration_open, comp.registration_close), true),
-            ])
-            // TODO: add reactions and send to the right channel
-        })
+            let country = COUNTRIES.get(comp.country_iso2.as_str()).unwrap();
+            let channel = channels.iter().find(|c| c.name == format!("{} {}", country.0, country.1)).unwrap();
+            let thumbnail =
+                "https://raw.githubusercontent.com/thewca/worldcubeassociation.org/e974e9020e8c8a1e562c57695b96b312efb8eafa/WcaOnRails/public/files/WCAlogo_50x50.png";
+            if comp.cancelled_at.is_some() {
+                EmbedMessage {
+                    message: CreateEmbed::new().title(format!("**{}**", comp.name)).url(comp.url).thumbnail(thumbnail).colour(Color::new(0xFF0000)).description("La compétition a été annulée."),
+                    reactions: vec![
+                        ReactionType::Custom {
+                            animated: false,
+                            id: EmojiId::new(421349840467787776),
+                            name: Some("RIP".to_string())
+                        }
+                        ],
+                    channel,
+                }
+            } else {
+                EmbedMessage {
+                    message:
+                    CreateEmbed::new()
+                        .title(format!("**{}**", comp.name))
+                        .url(comp.url)
+                        .thumbnail(thumbnail).colour(Color::new(0x00FF00)).fields([
+                        ("Ville", comp.city, true),
+                        ("Pays", format!("__**{}**__ {}", country.1, country.0), true),
+                        ("Adresse", format!("[{}](https://duckduckgo.com/?ia=maps&iaxm=maps&q={},{})", comp.venue_address, comp.latitude_degrees, comp.longitude_degrees), false),
+                        ("Competiteurs max", comp.competitor_limit.to_string(), false),
+                        ("Date", prettify_two_dates(&comp.start_date, &comp.end_date), true),
+                        ("Inscriptions", prettify_two_dates(&comp.registration_open, &comp.registration_close), true),
+                    ]),
+                    reactions: [
+                        ReactionType::Custom {
+                            animated: false,
+                            id: EmojiId::new(862620349376364554),
+                            name: Some("WCA".to_string())
+                        }
+                        ].into_iter().chain(comp.events_ids.iter().map(|id| EVENT_EMOJI.get(id.as_str()).unwrap().clone())).collect(),
+                    channel,
+                }
+            }
+        }).collect()
     }
 }
 
-impl Controller for Competitions {}
+fn prettify_two_dates(start: &str, end: &str) -> String {
+    let start = chrono::DateTime::parse_from_rfc3339(start).unwrap();
+    let end = chrono::DateTime::parse_from_rfc3339(end).unwrap();
+
+    let formatted_date = end.format("DD/MM/YYYY");
+
+    if start.year() == end.year() {
+        if start.month() == end.month() {
+            if start.day() == end.day() {
+                return formatted_date.to_string();
+            }
+            return format!("{} au {formatted_date}", start.format("DD"));
+        }
+        return format!("{} au {formatted_date}", start.format("DD/MM"));
+    }
+    format!("{} au {formatted_date}", start.format("DD/MM/YYYY"))
+}

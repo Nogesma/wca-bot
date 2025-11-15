@@ -1,6 +1,8 @@
 use std::io;
 use thiserror::Error;
 
+pub type Result<T> = std::result::Result<T, InitError>;
+
 #[derive(Error, Debug)]
 pub enum InitError {
     #[error("Io Error")]
@@ -19,4 +21,10 @@ pub enum InitError {
     MissingData,
     #[error("Cynic req error")]
     CynicReq(#[from] cynic::http::CynicReqwestError),
+    #[error("Missing channel")]
+    MissingChannel,
+    #[error("Serenity error")]
+    Serenity,
+    #[error("Env error")]
+    Env(#[from] std::env::VarError),
 }
