@@ -1,5 +1,5 @@
 use crate::{
-    config::COUNTRIES,
+    config::{COUNTRIES, country_code_to_flag_emoji},
     controllers::{Controller, competitions::COMPS, live::LIVE},
     error::{InitError, Result},
     jobs::jobs,
@@ -57,8 +57,8 @@ async fn init(ctx: Context, guild: GuildId) -> Result<()> {
     let mut threads = active_threads;
     threads.append(&mut archived_threads);
 
-    for (flag, name) in COUNTRIES.values() {
-        let channel_name = format!("{flag} {name}",);
+    for (code, name) in COUNTRIES.iter() {
+        let channel_name = format!("{} {name}", country_code_to_flag_emoji(code)?);
 
         if threads.iter().any(|t| t.name == channel_name) {
             continue;

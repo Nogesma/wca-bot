@@ -1,27 +1,37 @@
+use crate::error::{InitError, Result};
 use serenity::all::{Color, EmojiId, ReactionType};
 use std::{collections::HashMap, sync::LazyLock};
 
-pub static COUNTRIES: LazyLock<HashMap<&str, (&str, &str)>> = LazyLock::new(|| {
+pub static COUNTRIES: LazyLock<HashMap<&str, &str>> = LazyLock::new(|| {
     HashMap::from([
-        ("FR", ("🇫🇷", "France")),
-        ("GB", ("🇬🇧", "Royaume-Uni")),
-        ("BE", ("🇧🇪", "Belgique")),
-        ("CH", ("🇨🇭", "Suisse")),
-        ("DE", ("🇩🇪", "Allemagne")),
-        ("NL", ("🇳🇱", "Pays-Bas")),
-        ("ES", ("🇪🇸", "Espagne")),
-        ("PT", ("🇵🇹", "Portugal")),
-        ("IT", ("🇮🇹", "Italie")),
-        ("CA", ("🇨🇦", "Canada")),
-        ("AD", ("🇦🇩", "Andorre")),
-        ("MC", ("🇲🇨", "Monaco")),
-        ("SM", ("🇸🇲", "Saint-Marin")),
-        ("LU", ("🇱🇺", "Luxembourg")),
-        ("LI", ("🇱🇮", "Liechtenstein")),
-        ("CL", ("🇨🇱", "Chili")),
-        ("MA", ("🇲🇦", "Maroc")),
+        ("FR", "France"),
+        ("GB", "Royaume-Uni"),
+        ("BE", "Belgique"),
+        ("CH", "Suisse"),
+        ("DE", "Allemagne"),
+        ("NL", "Pays-Bas"),
+        ("ES", "Espagne"),
+        ("PT", "Portugal"),
+        ("IT", "Italie"),
+        ("CA", "Canada"),
+        ("AD", "Andorre"),
+        ("MC", "Monaco"),
+        ("SM", "Saint-Marin"),
+        ("LU", "Luxembourg"),
+        ("LI", "Liechtenstein"),
+        ("CL", "Chili"),
+        ("MA", "Maroc"),
     ])
 });
+
+// Taken from https://github.com/leodutra/country-emoji/
+const FLAG_MAGIC_NUMBER: u32 = 127462 - 65;
+
+pub fn country_code_to_flag_emoji(code: &str) -> Result<String> {
+    code.chars()
+        .map(|c| char::from_u32(c as u32 + FLAG_MAGIC_NUMBER).ok_or(InitError::FlagConvert))
+        .collect()
+}
 
 pub static EVENT_EMOJI: LazyLock<HashMap<&str, ReactionType>> = LazyLock::new(|| {
     HashMap::from([
@@ -94,7 +104,7 @@ pub static EVENT_EMOJI: LazyLock<HashMap<&str, ReactionType>> = LazyLock::new(||
             ReactionType::Custom {
                 animated: false,
                 id: EmojiId::new(889577417306419221),
-                name: Some("square-1".to_string()),
+                name: Some("squane".to_string()),
             },
         ),
         ("333oh", ReactionType::Unicode("🖐️".to_string())),

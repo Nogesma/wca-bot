@@ -27,4 +27,8 @@ pub enum InitError {
     Serenity,
     #[error("Env error")]
     Env(#[from] std::env::VarError),
+    #[error("Country code to flag emoji error")]
+    FlagConvert,
+    #[error("NaiveDate convert error")]
+    NaiveDateConvert(#[from] chrono::ParseError),
 }

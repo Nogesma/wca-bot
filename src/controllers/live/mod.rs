@@ -1,6 +1,6 @@
 use super::{Controller, ControllerInner, EmbedMessage};
 use crate::{
-    config::{COUNTRIES, EVENT_EMOJI, TAG_COLOR},
+    config::{EVENT_EMOJI, TAG_COLOR, country_code_to_flag_emoji},
     error::{InitError, Result},
 };
 use cynic::{QueryBuilder, http::ReqwestExt};
@@ -33,7 +33,10 @@ impl ControllerInner for Live {
     type Inner = Record;
 
     fn format(self, channels: &'_ [GuildChannel]) -> Vec<EmbedMessage<'_>> {
-        let channel = channels.first().unwrap();
+        let Some(channel) = channels.first() else {
+            return vec![];
+        };
+
         self.0
             .into_iter()
             .map(move |record| {
@@ -43,7 +46,9 @@ impl ControllerInner for Live {
                         .title(format!(
                             "{} {} {} of {}",
                             record.result.round.competition_event.event.name,
-                            EVENT_EMOJI.get(event_id).unwrap(),
+                            EVENT_EMOJI
+                                .get(event_id)
+                                .map_or_else(String::new, |v| v.to_string()),
                             get_result_type(&record.t, event_id),
                             format_attempt_result(record.attempt_result, event_id)
                         ))
@@ -52,18 +57,13 @@ impl ControllerInner for Live {
                             record.result.round.competition_event.competition.id.inner(),
                             record.result.round.id.inner()
                         ))
-                        .description(
-                            // TODO: Country iso2 will fail, need to import crate
-                            format!(
-                                "{} from {} {}",
-                                record.result.person.name.unwrap_or_default(),
-                                record.result.person.country.name,
-                                COUNTRIES
-                                    .get(record.result.person.country.iso2.as_str())
-                                    .unwrap_or(&("", ""))
-                                    .0
-                            ),
-                        )
+                        .description(format!(
+                            "{} from {} {}",
+                            record.result.person.name.unwrap_or_default(),
+                            record.result.person.country.name,
+                            country_code_to_flag_emoji(&record.result.person.country.iso2)
+                                .unwrap_or_default()
+                        ))
                         .colour(
                             *TAG_COLOR
                                 .get(record.tag.as_str())
