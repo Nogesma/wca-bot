@@ -16,4 +16,6 @@ RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/
 
 COPY --from=builder /usr/local/cargo/bin/wca-bot /usr/local/bin/wca-bot
 
+WORKDIR /usr/src/app
+
 CMD ["wca-bot"]
